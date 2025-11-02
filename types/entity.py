@@ -5,6 +5,5 @@ class Entity:
         self.name = name
     
     def print_stats(self) -> None:
-        print(self.name, ":")
-        print("Health: ", self.health)
-        print("Attack: ", self.attack)
+        print("--{name}--".format(name = self.name))
+        print("Health:", self.health, "\t", "Attack:", self.attack)
