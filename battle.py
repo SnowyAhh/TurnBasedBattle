@@ -1,3 +1,5 @@
+import random
+
 from types.entity import Entity
 from types.enemy import Enemy
 from types.player import Player
@@ -5,7 +7,7 @@ from types.player import Player
 class Battle:
     # Battle file, shows moves, damage, health
     def __init__(self, player: Player) -> None:
-        self.round = 0
+        self.round = 1
         self.enemy = self.generate_enemy()
         self.player = player
 
@@ -23,71 +25,107 @@ class Battle:
         print("A {e} suddenly appears!".format(e = self.enemy.name))
 
     def print_menu(self) -> None:
-        print("---Round {n}---".format(n = self.round))
+        print("\n---Round {number}---\n".format(number = self.round))
         self.enemy.print_stats()
         self.player.print_stats()
         print("--Choose your move--")
         print("1. Attack".ljust(15)) # For future: Print item in same line
-        # For future: Print Run away
+        print("2. Run away")
 
     # Check input
-    def get_menu_input(self, accepted: list[int]) -> int:
+    def get_menu_input(self, accepted: list[str]) -> str:
         choice = ""
-        try :
-            choice = int(input())
-        except:
-            print("Error: Enter a number")
+        choice = input()
         while choice not in accepted:
             print("Invalid choice, try again: ")
-            try:
-                choice = int(input())
-            except:
-                print("Error: Enter a number")
-        return int(choice)
+            choice = input()
+        return choice
 
     # Attack
-    def print_attack(self, attacker: Entity, opponent: Entity, damage: int):
-        print("{a} attacks {o}!".format(a = attacker.name, o = opponent.name))
-        print("{o} takes {dmg} damage!".format(o = opponent.name, dmg = damage))
+    def print_attack(self, attacker: Entity, 
+                     opponent: Entity, damage: int) -> None:
+        attacker.print_attack(opponent)
+        opponent.print_damaged(damage)
+        print()
     
-    def calc_damage(self, damage):
+    def calc_damage(self, damage) -> int:
         # For future: Add crit damage and crit rate here
         # Otherwise, damage = attack
         return damage
 
-    def attack(self, attacker: Entity, opponent: Entity):
+    def attack(self, attacker: Entity, opponent: Entity) -> None:
         damage = self.calc_damage(attacker.attack)
         opponent.health -= damage
         self.print_attack(attacker, opponent, damage)
 
     # Run away
+    def calc_run_away_success(self) -> bool:
+        # Run away is 70% chance of success
+        number: int = random.randint(1, 10)
+        if (number <= 3):
+            return False
+        else:
+            return True
 
+    def confirm_run_away(self) -> bool:
+        menu_confirmation_list = ["Y", "y", "n", "N"]
+        print("Are you sure you want to run? (Y/N)")
+        
+        choice = self.get_menu_input(menu_confirmation_list)
+
+        if choice == "Y" or choice == "y":
+            return True
+        elif choice == "N" or choice == "n":
+            return False
+        
+        raise ValueError("Invalid choice")
+        
     # Use items
 
 
     # Fight function
     def battle(self) -> None:
         # Inputs accepted while choose for menu
-        menu_list_int = [1]
+        menu_choices_list = ["1", "2"]
         
         self.print_start()
         while (self.enemy.health != 0 and self.player.health != 0):
-            self.round += 1
-
             # Player turn
             self.print_menu()
-            choice = self.get_menu_input(menu_list_int)
+            choice = self.get_menu_input(menu_choices_list)
 
             match choice:
-                case 1:
+                case "1":
                     # Attack
                     self.attack(self.player, self.enemy)
+                case "2":
+                    # Run away
+                    try:
+                        confirmation: bool = self.confirm_run_away()
+                        if not confirmation:
+                            continue
+                    except:
+                        print("Invalid choice selected")
+                        continue
+
+                    success: bool = self.calc_run_away_success()
+        
+                    if (success):
+                        print("Ran away successfully!")
+                        break
+                    else:
+                        print("Failed to run away!")
+                case _:
+                    print("Invalid choice selected")
+                    continue
             
             if (self.enemy.health <= 0):
                 break
             
             # Enemy turn
             self.attack(self.enemy, self.player)
+
+            self.round += 1
         
         if (self.enemy.health <= 0):
             print("You've defeated {e}".format(e = self.enemy.name))
