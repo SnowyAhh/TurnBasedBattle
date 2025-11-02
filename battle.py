@@ -1,3 +1,5 @@
+import random
+
 from types.entity import Entity
 from types.enemy import Enemy
 from types.player import Player
@@ -28,7 +30,7 @@ class Battle:
         self.player.print_stats()
         print("--Choose your move--")
         print("1. Attack".ljust(15)) # For future: Print item in same line
-        # For future: Print Run away
+        print("2. Run away")
 
     # Check input
     def get_menu_input(self, accepted: list[int]) -> int:
@@ -46,29 +48,40 @@ class Battle:
         return int(choice)
 
     # Attack
-    def print_attack(self, attacker: Entity, opponent: Entity, damage: int):
+    def print_attack(self, attacker: Entity, 
+                     opponent: Entity, damage: int) -> None:
         print("{a} attacks {o}!".format(a = attacker.name, o = opponent.name))
         print("{o} takes {dmg} damage!".format(o = opponent.name, dmg = damage))
     
-    def calc_damage(self, damage):
+    def calc_damage(self, damage) -> int:
         # For future: Add crit damage and crit rate here
         # Otherwise, damage = attack
         return damage
 
-    def attack(self, attacker: Entity, opponent: Entity):
+    def attack(self, attacker: Entity, opponent: Entity) -> None:
         damage = self.calc_damage(attacker.attack)
         opponent.health -= damage
         self.print_attack(attacker, opponent, damage)
 
     # Run away
+    def calc_run_away_success(self) -> bool:
+        # Run away is 70% chance of success
+        number: int = random.randint(1, 10)
+        if (number <= 3):
+            return False
+        else:
+            return True
 
+    # def confirm_run_away(self) -> bool:
+    #     print("Are you sure you want to run? (Y/N)")
+        
     # Use items
 
 
     # Fight function
     def battle(self) -> None:
         # Inputs accepted while choose for menu
-        menu_list_int = [1]
+        menu_list_int = [1, 2]
         
         self.print_start()
         while (self.enemy.health != 0 and self.player.health != 0):
@@ -82,6 +95,16 @@ class Battle:
                 case 1:
                     # Attack
                     self.attack(self.player, self.enemy)
+                case 2:
+                    # Run away
+                    # confirmation: bool = self.confirm_run_away()
+                    success: bool = self.calc_run_away_success()
+        
+                    if (success):
+                        print("Ran away successfully!")
+                        break
+                    else:
+                        print("Failed to run away!")
             
             if (self.enemy.health <= 0):
                 break
