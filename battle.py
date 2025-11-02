@@ -33,25 +33,19 @@ class Battle:
         print("2. Run away")
 
     # Check input
-    def get_menu_input(self, accepted: list[int]) -> int:
+    def get_menu_input(self, accepted: list[str]) -> str:
         choice = ""
-        try :
-            choice = int(input())
-        except:
-            print("Error: Enter a number")
+        choice = input()
         while choice not in accepted:
             print("Invalid choice, try again: ")
-            try:
-                choice = int(input())
-            except:
-                print("Error: Enter a number")
-        return int(choice)
+            choice = input()
+        return choice
 
     # Attack
     def print_attack(self, attacker: Entity, 
                      opponent: Entity, damage: int) -> None:
-        print("{a} attacks {o}!".format(a = attacker.name, o = opponent.name))
-        print("{o} takes {dmg} damage!".format(o = opponent.name, dmg = damage))
+        attacker.print_attack(opponent)
+        opponent.print_damaged(damage)
     
     def calc_damage(self, damage) -> int:
         # For future: Add crit damage and crit rate here
@@ -81,7 +75,8 @@ class Battle:
     # Fight function
     def battle(self) -> None:
         # Inputs accepted while choose for menu
-        menu_list_int = [1, 2]
+        menu_choices_list = ["1", "2"]
+        menu_confirmation_list = ["Y", "y", "n", "N"]
         
         self.print_start()
         while (self.enemy.health != 0 and self.player.health != 0):
@@ -89,13 +84,13 @@ class Battle:
 
             # Player turn
             self.print_menu()
-            choice = self.get_menu_input(menu_list_int)
+            choice = self.get_menu_input(menu_choices_list)
 
             match choice:
-                case 1:
+                case "1":
                     # Attack
                     self.attack(self.player, self.enemy)
-                case 2:
+                case "2":
                     # Run away
                     # confirmation: bool = self.confirm_run_away()
                     success: bool = self.calc_run_away_success()
