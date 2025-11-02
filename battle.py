@@ -7,7 +7,7 @@ from types.player import Player
 class Battle:
     # Battle file, shows moves, damage, health
     def __init__(self, player: Player) -> None:
-        self.round = 0
+        self.round = 1
         self.enemy = self.generate_enemy()
         self.player = player
 
@@ -25,7 +25,7 @@ class Battle:
         print("A {e} suddenly appears!".format(e = self.enemy.name))
 
     def print_menu(self) -> None:
-        print("---Round {n}---".format(n = self.round))
+        print("\n---Round {number}---\n".format(number = self.round))
         self.enemy.print_stats()
         self.player.print_stats()
         print("--Choose your move--")
@@ -46,6 +46,7 @@ class Battle:
                      opponent: Entity, damage: int) -> None:
         attacker.print_attack(opponent)
         opponent.print_damaged(damage)
+        print()
     
     def calc_damage(self, damage) -> int:
         # For future: Add crit damage and crit rate here
@@ -66,8 +67,18 @@ class Battle:
         else:
             return True
 
-    # def confirm_run_away(self) -> bool:
-    #     print("Are you sure you want to run? (Y/N)")
+    def confirm_run_away(self) -> bool:
+        menu_confirmation_list = ["Y", "y", "n", "N"]
+        print("Are you sure you want to run? (Y/N)")
+        
+        choice = self.get_menu_input(menu_confirmation_list)
+
+        if choice == "Y" or choice == "y":
+            return True
+        elif choice == "N" or choice == "n":
+            return False
+        
+        raise ValueError("Invalid choice")
         
     # Use items
 
@@ -76,12 +87,9 @@ class Battle:
     def battle(self) -> None:
         # Inputs accepted while choose for menu
         menu_choices_list = ["1", "2"]
-        menu_confirmation_list = ["Y", "y", "n", "N"]
         
         self.print_start()
         while (self.enemy.health != 0 and self.player.health != 0):
-            self.round += 1
-
             # Player turn
             self.print_menu()
             choice = self.get_menu_input(menu_choices_list)
@@ -92,7 +100,14 @@ class Battle:
                     self.attack(self.player, self.enemy)
                 case "2":
                     # Run away
-                    # confirmation: bool = self.confirm_run_away()
+                    try:
+                        confirmation: bool = self.confirm_run_away()
+                        if not confirmation:
+                            continue
+                    except:
+                        print("Invalid choice selected")
+                        continue
+
                     success: bool = self.calc_run_away_success()
         
                     if (success):
@@ -100,12 +115,17 @@ class Battle:
                         break
                     else:
                         print("Failed to run away!")
+                case _:
+                    print("Invalid choice selected")
+                    continue
             
             if (self.enemy.health <= 0):
                 break
             
             # Enemy turn
             self.attack(self.enemy, self.player)
+
+            self.round += 1
         
         if (self.enemy.health <= 0):
             print("You've defeated {e}".format(e = self.enemy.name))
