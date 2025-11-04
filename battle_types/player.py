@@ -13,7 +13,10 @@ class Player(Entity):
     def initalise_items(self) -> list:
         i_list = [
                     [item_list.get("sml_hp_potion"), 5], 
-                    [item_list.get("med_hp_potion"), 3]
+                    [item_list.get("med_hp_potion"), 3],
+                    [item_list.get("sml_atk_potion"), 3],
+                    [item_list.get("med_atk_potion"), 3],
+                    [item_list.get("lrg_atk_potion"), 3],
                 ]
     
         return i_list

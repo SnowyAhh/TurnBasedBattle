@@ -126,6 +126,18 @@ class Battle:
             self.player.decrease_item(index)
 
             return True
+        elif self.player.items[index][0].type is ItemTypes.ATTACK:
+            print("Used {name}. Increased attack by {points}!".format(
+                name = self.player.items[index][0].name,
+                points = self.player.items[index][0].points
+            ))
+
+            # Increase attack
+            self.player.attack += self.player.items[index][0].points
+            # Decrease quantity
+            self.player.decrease_item(index)
+
+            return True
         else:
             raise ValueError("Invalid choice")
 
