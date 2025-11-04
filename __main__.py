@@ -1,4 +1,4 @@
-from types.player import Player
+from battle_types.player import Player
 from battle import Battle
 # File for getting terminal input and showing terminal output
 def main():
