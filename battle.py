@@ -1,8 +1,9 @@
 import random
 
-from types.entity import Entity
-from types.enemy import Enemy
-from types.player import Player
+from battle_types.entity import Entity
+from battle_types.enemy import Enemy
+from battle_types.player import Player
+from battle_types.item import ItemTypes
 
 class Battle:
     # Battle file, shows moves, damage, health
@@ -25,12 +26,12 @@ class Battle:
         print("A {e} suddenly appears!".format(e = self.enemy.name))
 
     def print_menu(self) -> None:
-        print("\n---Round {number}---\n".format(number = self.round))
+        print("---Round {number}---\n".format(number = self.round))
         self.enemy.print_stats()
         self.player.print_stats()
         print("--Choose your move--")
-        print("1. Attack".ljust(15)) # For future: Print item in same line
-        print("2. Run away")
+        print("1. Attack".ljust(15), "2. Use Item")
+        print("3. Run away")
 
     # Check input
     def get_menu_input(self, accepted: list[str]) -> str:
@@ -67,7 +68,7 @@ class Battle:
         else:
             return True
 
-    def confirm_run_away(self) -> bool:
+    def get_confirmation(self) -> bool:
         menu_confirmation_list = ["Y", "y", "n", "N"]
         print("Are you sure you want to run? (Y/N)")
         
@@ -81,12 +82,70 @@ class Battle:
         raise ValueError("Invalid choice")
         
     # Use items
+    def use_item(self) -> bool:
+        accepted_list = []
+        print("Your Items:")
+
+        if (len(self.player.items) == 0):
+            print("No items available")
+            print("Going back to selection: ")
+            return False
+        
+        # Print items
+        for i in range(len(self.player.items)):
+            accepted_list.append(str(i + 1))
+            print("\t{num}. {name} {quantity} - {description}".format(
+                num = i + 1, 
+                name = self.player.items[i][0].name, 
+                quantity = self.player.items[i][1], 
+                description = self.player.items[i][0].description
+            ))
+
+        print("Enter the item number to use it, or q to go back")
+        accepted_list.append("q")
+        accepted_list.append("Q")
+        
+        # Get item number
+        choice = self.get_menu_input(accepted_list)
+
+        # Quit from item menu
+        if choice == "q" or choice == "Q":
+            return False
+        
+        # Use item
+        index = int(choice) - 1
+        if self.player.items[index][0].type is ItemTypes.HEALTH:
+            print("Used {name}. Restored {points} hp!".format(
+                name = self.player.items[index][0].name,
+                points = self.player.items[index][0].points
+            ))
+
+            # Increase health
+            self.player.health += self.player.items[index][0].points
+            # Decrease quantity
+            self.player.decrease_item(index)
+
+            return True
+        elif self.player.items[index][0].type is ItemTypes.ATTACK:
+            print("Used {name}. Increased attack by {points}!".format(
+                name = self.player.items[index][0].name,
+                points = self.player.items[index][0].points
+            ))
+
+            # Increase attack
+            self.player.attack += self.player.items[index][0].points
+            # Decrease quantity
+            self.player.decrease_item(index)
+
+            return True
+        else:
+            raise ValueError("Invalid choice")
 
 
     # Fight function
     def battle(self) -> None:
         # Inputs accepted while choose for menu
-        menu_choices_list = ["1", "2"]
+        menu_choices_list = ["1", "2", "3"]
         
         self.print_start()
         while (self.enemy.health != 0 and self.player.health != 0):
@@ -99,9 +158,15 @@ class Battle:
                     # Attack
                     self.attack(self.player, self.enemy)
                 case "2":
+                    # Use item
+                    success = self.use_item()
+
+                    if not success:
+                        continue
+                case "3":
                     # Run away
                     try:
-                        confirmation: bool = self.confirm_run_away()
+                        confirmation: bool = self.get_confirmation()
                         if not confirmation:
                             continue
                     except:

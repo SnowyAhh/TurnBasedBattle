@@ -1,5 +1,5 @@
-from types.entity import Entity
-from types.player import Player
+from battle_types.entity import Entity
+from battle_types.player import Player
 
 class Enemy(Entity):
     def print_attack(self, opponent: Entity) -> None:
