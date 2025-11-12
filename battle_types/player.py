@@ -20,8 +20,11 @@ class Player(Entity):
                     [item_list.get("sml_hp_potion"), 5], 
                     [item_list.get("med_hp_potion"), 3],
                     [item_list.get("sml_atk_potion"), 3],
-                    [item_list.get("med_atk_potion"), 3],
                     [item_list.get("lrg_atk_potion"), 3],
+                    [item_list.get("sml_rate_potion"), 5],
+                    [item_list.get("lrg_rate_potion"), 1],
+                    [item_list.get("sml_cdmg_potion"), 4],
+                    [item_list.get("lrg_cdmg_potion"), 2],
                 ]
     
         return i_list
