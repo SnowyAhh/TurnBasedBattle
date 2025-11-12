@@ -29,11 +29,21 @@ class Battle:
 
     def print_menu(self) -> None:
         print("---Round {number}---\n".format(number = self.round))
-        self.enemy.print_stats()
-        self.player.print_stats()
+        self.enemy.print_basic_stats()
+        self.player.print_basic_stats()
         print("--Choose your move--")
-        print("1. Attack".ljust(15), "2. Use Item")
-        print("3. Run away")
+        print(f"{"1. Attack":20s}2. Use Item")
+        print(f"{"3. Check stats":20s}4. Run away")
+    
+    def print_stats(self) -> None:
+        print("Stats:")
+        self.enemy.print_all_stats()
+        self.player.print_all_stats()
+        print("")
+        
+        # Wait for the player to choose to go back
+        print("Go back now? (Y)")
+        self.get_menu_input(["Y", "y"])
 
     # Check input
     def get_menu_input(self, accepted: list[str]) -> str:
@@ -161,7 +171,7 @@ class Battle:
     # Fight function
     def battle(self) -> None:
         # Inputs accepted while choose for menu
-        menu_choices_list = ["1", "2", "3"]
+        menu_choices_list = ["1", "2", "3", "4"]
         
         self.print_start()
         while (self.enemy.health != 0 and self.player.health != 0):
@@ -180,6 +190,11 @@ class Battle:
                     if not success:
                         continue
                 case "3":
+                    # Check stats
+                    self.print_stats()
+
+                    continue
+                case "4":
                     # Run away
                     try:
                         confirmation: bool = self.get_confirmation()

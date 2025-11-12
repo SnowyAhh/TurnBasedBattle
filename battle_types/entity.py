@@ -7,9 +7,13 @@ class Entity:
         self.crit_damage = crit_damage
         self.crit_rate = crit_rate
     
-    def print_stats(self) -> None:
+    def print_basic_stats(self) -> None:
         print("--{name}--".format(name = self.name))
-        print("   Health:", self.health, "\t", "Attack:", self.attack)
+        print(f"{f"Health: {self.health}":20s}Attack:{self.attack}")
+    
+    def print_all_stats(self) -> None:
+        self.print_basic_stats()
+        print(f"{f"Crit Rate: {self.crit_rate}":20s}Crit Damage:{self.crit_damage}")
     
     def print_crit_hit(self) -> None:
         print("Critical hit!")
