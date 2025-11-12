@@ -18,7 +18,9 @@ class Battle:
         health = 100
         attack = 10
         name = "Thief"
-        enemy = Enemy(health, attack, name)
+        crit_rate = 0.2
+        crit_damage = 1.5
+        enemy = Enemy(health, attack, name, crit_damage, crit_rate)
         return enemy
 
     # Menu prints
@@ -46,17 +48,31 @@ class Battle:
     def print_attack(self, attacker: Entity, 
                      opponent: Entity, damage: int) -> None:
         attacker.print_attack(opponent)
+
+        # Print critical hit if it occurs
+        if (damage != attacker.attack):
+            attacker.print_crit_hit()
+
         opponent.print_damaged(damage)
         print()
     
-    def calc_damage(self, damage) -> int:
-        # For future: Add crit damage and crit rate here
+    def calc_damage(self, attacker: Entity) -> int:
+        damage = attacker.attack
+
+        # See if attacker will do a crit attack
+        number: int = random.randint(1, 100)
+        if (number <= attacker.crit_rate * 100):
+            # Crit attack
+            damage = int(damage * attacker.crit_damage)
+
         # Otherwise, damage = attack
         return damage
 
     def attack(self, attacker: Entity, opponent: Entity) -> None:
-        damage = self.calc_damage(attacker.attack)
+        damage = self.calc_damage(attacker)
+
         opponent.health -= damage
+        
         self.print_attack(attacker, opponent, damage)
 
     # Run away

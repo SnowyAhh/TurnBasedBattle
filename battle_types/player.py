@@ -7,8 +7,12 @@ class Player(Entity):
         starting_health = 100
         starting_attack = 20
         player_name = "You"
+        starting_crit_damage_percentage = 1.5
+        starting_crit_rate_percentage = 0.25
         self.items = self.initalise_items()
-        super().__init__(starting_health, starting_attack, player_name)
+        super().__init__(starting_health, starting_attack, player_name, 
+                         starting_crit_damage_percentage, 
+                         starting_crit_rate_percentage)
     
     def initalise_items(self) -> list:
         i_list = [
