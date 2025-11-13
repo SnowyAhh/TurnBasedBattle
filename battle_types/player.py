@@ -17,14 +17,14 @@ class Player(Entity):
     
     def initalise_items(self) -> list:
         i_list = [
-                    [item_list.get("sml_hp_potion"), 5], 
-                    [item_list.get("med_hp_potion"), 3],
-                    [item_list.get("sml_atk_potion"), 3],
-                    [item_list.get("lrg_atk_potion"), 3],
-                    [item_list.get("sml_rate_potion"), 5],
-                    [item_list.get("lrg_rate_potion"), 3],
-                    [item_list.get("sml_cdmg_potion"), 4],
-                    [item_list.get("lrg_cdmg_potion"), 2],
+                    [item_list.get("potion_hp_sml"), 5], 
+                    [item_list.get("potion_hp_med"), 3],
+                    [item_list.get("potion_atk_sml"), 3],
+                    [item_list.get("potion_atk_lrg"), 3],
+                    [item_list.get("potion_rate_med"), 5],
+                    [item_list.get("potion_rate_lrg"), 3],
+                    [item_list.get("potion_cdmg_sml"), 4],
+                    [item_list.get("potion_cdmg_lrg"), 2],
                 ]
     
         return i_list
