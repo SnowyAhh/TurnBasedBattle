@@ -120,7 +120,7 @@ class Battle:
         # Print items
         for i in range(len(self.player.items)):
             accepted_list.append(str(i + 1))
-            print("\t{num}. {name} {quantity} - {description}".format(
+            print("\t{num}. {name} x{quantity} - {description}".format(
                 num = i + 1, 
                 name = self.player.items[i][0].name, 
                 quantity = self.player.items[i][1], 

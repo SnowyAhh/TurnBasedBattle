@@ -22,7 +22,7 @@ class Player(Entity):
                     [item_list.get("sml_atk_potion"), 3],
                     [item_list.get("lrg_atk_potion"), 3],
                     [item_list.get("sml_rate_potion"), 5],
-                    [item_list.get("lrg_rate_potion"), 1],
+                    [item_list.get("lrg_rate_potion"), 3],
                     [item_list.get("sml_cdmg_potion"), 4],
                     [item_list.get("lrg_cdmg_potion"), 2],
                 ]
@@ -69,13 +69,26 @@ class Player(Entity):
         return True
 
     def use_rate_item(self, index: int) -> bool:
-        print("Used {name}. Increased crit rate by {points}!".format(
-            name = self.items[index][0].name,
-            points = self.items[index][0].points
-        ))
+        # Make sure crit rate hits a max of 1.0
+        if (self.crit_rate >= 1.0):
+            print("Used {name}. But it failed! Already have max crit rate".format(
+                name = self.items[index][0].name
+            ))
+        elif (self.crit_rate + self.items[index][0].points > 1.0):
+            print("Used {name}. Increased crit rate by {points:.2f}!".format(
+                name = self.items[index][0].name,
+                points = 1.0 - self.crit_rate
+            ))
 
-        # Increase crit rate
-        self.crit_rate += self.items[index][0].points
+            self.crit_rate = 1.0
+        else: 
+            print("Used {name}. Increased crit rate by {points}!".format(
+                name = self.items[index][0].name,
+                points = self.items[index][0].points
+            ))
+
+            self.crit_rate += self.items[index][0].points
+
         # Decrease quantity
         self.decrease_item(index)
 
