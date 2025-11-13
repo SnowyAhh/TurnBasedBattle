@@ -18,7 +18,9 @@ class Battle:
         health = 100
         attack = 10
         name = "Thief"
-        enemy = Enemy(health, attack, name)
+        crit_rate = 0.2
+        crit_damage = 1.5
+        enemy = Enemy(health, attack, name, crit_damage, crit_rate)
         return enemy
 
     # Menu prints
@@ -27,11 +29,21 @@ class Battle:
 
     def print_menu(self) -> None:
         print("---Round {number}---\n".format(number = self.round))
-        self.enemy.print_stats()
-        self.player.print_stats()
+        self.enemy.print_basic_stats()
+        self.player.print_basic_stats()
         print("--Choose your move--")
-        print("1. Attack".ljust(15), "2. Use Item")
-        print("3. Run away")
+        print(f"{"1. Attack":20s}2. Use Item")
+        print(f"{"3. Check stats":20s}4. Run away")
+    
+    def print_stats(self) -> None:
+        print("Stats:")
+        self.enemy.print_all_stats()
+        self.player.print_all_stats()
+        print("")
+        
+        # Wait for the player to choose to go back
+        print("Go back now? (Y)")
+        self.get_menu_input(["Y", "y"])
 
     # Check input
     def get_menu_input(self, accepted: list[str]) -> str:
@@ -46,17 +58,31 @@ class Battle:
     def print_attack(self, attacker: Entity, 
                      opponent: Entity, damage: int) -> None:
         attacker.print_attack(opponent)
+
+        # Print critical hit if it occurs
+        if (damage != attacker.attack):
+            attacker.print_crit_hit()
+
         opponent.print_damaged(damage)
         print()
     
-    def calc_damage(self, damage) -> int:
-        # For future: Add crit damage and crit rate here
+    def calc_damage(self, attacker: Entity) -> int:
+        damage = attacker.attack
+
+        # See if attacker will do a crit attack
+        number: int = random.randint(1, 100)
+        if (number <= attacker.crit_rate * 100):
+            # Crit attack
+            damage = int(damage * attacker.crit_damage)
+
         # Otherwise, damage = attack
         return damage
 
     def attack(self, attacker: Entity, opponent: Entity) -> None:
-        damage = self.calc_damage(attacker.attack)
+        damage = self.calc_damage(attacker)
+
         opponent.health -= damage
+        
         self.print_attack(attacker, opponent, damage)
 
     # Run away
@@ -94,7 +120,7 @@ class Battle:
         # Print items
         for i in range(len(self.player.items)):
             accepted_list.append(str(i + 1))
-            print("\t{num}. {name} {quantity} - {description}".format(
+            print("\t{num}. {name} x{quantity} - {description}".format(
                 num = i + 1, 
                 name = self.player.items[i][0].name, 
                 quantity = self.player.items[i][1], 
@@ -114,38 +140,13 @@ class Battle:
         
         # Use item
         index = int(choice) - 1
-        if self.player.items[index][0].type is ItemTypes.HEALTH:
-            print("Used {name}. Restored {points} hp!".format(
-                name = self.player.items[index][0].name,
-                points = self.player.items[index][0].points
-            ))
-
-            # Increase health
-            self.player.health += self.player.items[index][0].points
-            # Decrease quantity
-            self.player.decrease_item(index)
-
-            return True
-        elif self.player.items[index][0].type is ItemTypes.ATTACK:
-            print("Used {name}. Increased attack by {points}!".format(
-                name = self.player.items[index][0].name,
-                points = self.player.items[index][0].points
-            ))
-
-            # Increase attack
-            self.player.attack += self.player.items[index][0].points
-            # Decrease quantity
-            self.player.decrease_item(index)
-
-            return True
-        else:
-            raise ValueError("Invalid choice")
+        return self.player.use_item(index)
 
 
     # Fight function
     def battle(self) -> None:
         # Inputs accepted while choose for menu
-        menu_choices_list = ["1", "2", "3"]
+        menu_choices_list = ["1", "2", "3", "4"]
         
         self.print_start()
         while (self.enemy.health != 0 and self.player.health != 0):
@@ -164,6 +165,11 @@ class Battle:
                     if not success:
                         continue
                 case "3":
+                    # Check stats
+                    self.print_stats()
+
+                    continue
+                case "4":
                     # Run away
                     try:
                         confirmation: bool = self.get_confirmation()
