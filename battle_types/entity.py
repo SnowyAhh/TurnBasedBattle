@@ -1,11 +1,12 @@
 class Entity:
     def __init__(self, health: int, attack: int, name: str, 
-                 crit_damage: float, crit_rate: float) -> None:
+                 crit_damage: float, crit_rate: float, speed: int) -> None:
         self.health = health
         self.attack = attack
         self.name = name
         self.crit_damage = crit_damage
         self.crit_rate = crit_rate
+        self.speed = speed
     
     def print_basic_stats(self) -> None:
         print("--{name}--".format(name = self.name))
@@ -14,6 +15,7 @@ class Entity:
     def print_all_stats(self) -> None:
         self.print_basic_stats()
         print(f"{f"Crit Rate: {self.crit_rate:.2f}":20s}Crit Damage:{self.crit_damage}")
+        print(f"Speed: {self.speed}")
     
     def print_crit_hit(self) -> None:
         print("Critical hit!")
