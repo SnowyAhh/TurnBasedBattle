@@ -80,6 +80,43 @@ class Battle:
         
         self.print_attack(attacker, opponent, damage)
 
+    def player_attacks_first(self) -> bool:
+        self.attack(self.player, self.enemy)
+
+        if self.enemy.health <= 0:
+            return True
+        
+        self.attack(self.enemy, self.player)
+
+        return True
+    
+    def enemy_attacks_first(self) -> bool:
+        self.attack(self.enemy, self.player)
+
+        if self.player.health <= 0:
+            return True
+        
+        self.attack(self.player, self.enemy)
+
+        return True
+
+    # Speed is incorporated into attacks
+    def speed_attack(self) -> bool:
+        if (self.player.speed < self.enemy.speed):
+            return self.enemy_attacks_first()
+        elif (self.player.speed > self.enemy.speed):
+            return self.player_attacks_first()
+        else: 
+            # player.speed == enemy.speed
+            # 50/50 chance between the two on who goes first
+            number: int = random.randint(1, 2)
+
+            if number == 1:
+                return self.player_attacks_first()
+            else:
+                return self.enemy_attacks_first()
+
+
     # Run away
     def calc_run_away_success(self) -> bool:
         # Run away is 70% chance of success
@@ -144,15 +181,14 @@ class Battle:
         menu_choices_list = ["1", "2", "3", "4"]
         
         self.print_start()
+        enemy_has_already_attacked = False
         while (self.enemy.health != 0 and self.player.health != 0):
-            # Player turn
             self.print_menu()
             choice = self.get_menu_input(menu_choices_list)
 
             match choice:
                 case "1":
-                    # Attack
-                    self.attack(self.player, self.enemy)
+                    enemy_has_already_attacked = self.speed_attack() 
                 case "2":
                     # Use item
                     success = self.use_item()
@@ -188,8 +224,11 @@ class Battle:
             if (self.enemy.health <= 0):
                 break
             
-            # Enemy turn
-            self.attack(self.enemy, self.player)
+            # Attacks only if player has successfully used item or failed to run away
+            if not enemy_has_already_attacked:
+                self.attack(self.enemy, self.player)
+            
+            enemy_has_already_attacked = False
 
             self.round += 1
         
