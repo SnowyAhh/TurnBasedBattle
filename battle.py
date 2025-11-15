@@ -15,12 +15,7 @@ class Battle:
     # Randomises an enemy
     def generate_enemy(self) -> Enemy:
         # For now, it'll generate a set stat enemy
-        health = 100
-        attack = 10
-        name = "Thief"
-        crit_rate = 0.2
-        crit_damage = 1.5
-        enemy = Enemy(health, attack, name, crit_damage, crit_rate)
+        enemy = Enemy(health=100, attack=10, name="Thief", crit_damage=1.5, crit_rate=0.2, speed=100)
         return enemy
 
     # Menu prints
