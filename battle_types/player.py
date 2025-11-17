@@ -19,6 +19,7 @@ class Player(Entity):
                     [item_list.get("potion_rate_lrg"), 3],
                     [item_list.get("potion_cdmg_sml"), 4],
                     [item_list.get("potion_cdmg_lrg"), 2],
+                    [item_list.get("potion_speed_lrg"), 4],
                 ]
     
         return i_list
@@ -100,6 +101,19 @@ class Player(Entity):
         self.decrease_item(index)
 
         return True
+    
+    def use_speed_item(self, index: int) -> bool:
+        print("Used {name}. Increased speed by {points}!".format(
+            name = self.items[index][0].name,
+            points = self.items[index][0].points
+        ))
+
+        # Increase speed
+        self.speed += self.items[index][0].points
+        # Decrease quantity
+        self.decrease_item(index)
+
+        return True
 
     def use_item(self, index: int) -> bool:
         match self.items[index][0].type:
@@ -111,6 +125,8 @@ class Player(Entity):
                 return self.use_rate_item(index)
             case ItemTypes.CRIT_DAMAGE:
                 return self.use_cdmg_item(index)
+            case ItemTypes.SPEED:
+                return self.use_speed_item(index)
             case _:
                 raise ValueError("Invalid choice")
 
