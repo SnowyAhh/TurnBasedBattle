@@ -19,7 +19,8 @@ class Battle:
         # For now, it'll generate a set stat enemy
         a_list = [
             action_list.get("physical_attack_punch"),
-            action_list.get("physical_attack_stab")
+            action_list.get("physical_attack_stab"),
+            action_list.get("magic_health_heal")
         ]
 
         enemy = Enemy(health=100, attack=10, name="Thief", 
@@ -84,22 +85,22 @@ class Battle:
         return damage
 
     def player_acts_first(self, player_action: Action, enemy_action: Action) -> bool:
-        self.player.use_action(player_action, self.player, self.enemy)
+        self.player.use_action(player_action, self.enemy)
 
         if self.enemy.health <= 0:
             return True
         
-        self.enemy.use_action(player_action, self.enemy, self.player)
+        self.enemy.use_action(player_action, self.player)
 
         return True
     
     def enemy_acts_first(self, player_action: Action, enemy_action: Action) -> bool:
-        self.enemy.use_action(enemy_action, self.enemy, self.player)
+        self.enemy.use_action(enemy_action, self.player)
 
         if self.player.health <= 0:
             return True
         
-        self.player.use_action(player_action, self.player, self.enemy)
+        self.player.use_action(player_action, self.enemy)
 
         return True
 
@@ -245,7 +246,7 @@ class Battle:
             # Attacks only if player has successfully used item or failed to run away
             if not enemy_has_already_attacked:
                 action = self.enemy.choose_action()
-                self.enemy.use_action(action, self.enemy, self.player)
+                self.enemy.use_action(action, self.player)
             
             enemy_has_already_attacked = False
 

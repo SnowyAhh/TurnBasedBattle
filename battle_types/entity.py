@@ -28,6 +28,9 @@ class Entity:
     
     def print_attack(self, action: Action, opponent: Entity) -> None:
         pass
+
+    def print_heal(self, action: Action) -> None:
+        pass
     
     def print_damaged(self, damage: int) -> None:
         pass
@@ -47,9 +50,21 @@ class Entity:
         # Otherwise, damage = attack
         return [damage, is_crit]
 
-    def use_attack(self, attack: Action, user: Entity, opponent: Entity):
+    def use_attack(self, attack: Action, opponent: Entity):
+        damage = self.calc_damage(attack, self)
+
+        opponent.health -= damage[0]
+        
+        self.print_attack(attack, opponent)
+
+        if damage[1]:
+            self.print_crit_hit()
+        
+        opponent.print_damaged(damage[0])
+
+    def use_heal(self, heal: Action, user: Entity):
         pass
 
-    def use_action(self, action: Action, user: Entity, opponent: Entity):
+    def use_action(self, action: Action, opponent: Entity):
         if (action.type == ActionTypes.ATTACK):
-            user.use_attack(action, user, opponent)
+            self.use_attack(action, opponent)

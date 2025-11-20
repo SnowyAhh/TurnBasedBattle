@@ -30,7 +30,8 @@ class Player(Entity):
     def initalise_actions(self) -> list:
         a_list = [
             action_list.get("physical_attack_punch"),
-            action_list.get("physical_attack_stab")
+            action_list.get("physical_attack_stab"),
+            action_list.get("magic_health_heal")
         ]
 
         return a_list
@@ -50,18 +51,9 @@ class Player(Entity):
     def print_damaged(self, damage: int) -> None:
         print("{name} take {dmg} damage!".format(name = self.name, dmg = damage))
     
-    # Needs to be in player class because of print attack
-    def use_attack(self, attack: Action, user: Entity, opponent: Entity):
-        damage = self.calc_damage(attack, user)
-
-        opponent.health -= damage[0]
+    # # Needs to be in player class because of print attack
+    # def use_attack(self, attack: Action, opponent: Entity):
         
-        self.print_attack(attack, opponent)
-
-        if damage[1]:
-            super().print_crit_hit()
-        
-        opponent.print_damaged(damage[0])
 
 
     def use_health_item(self, index: int) -> bool:

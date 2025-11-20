@@ -19,15 +19,15 @@ class Enemy(Entity):
     def print_damaged(self, damage: int) -> None:
         print("{name} takes {dmg} damage!".format(name = self.name, dmg = damage))
     
-    def use_attack(self, attack: Action, user: Entity, opponent: Entity):
-        damage = self.calc_damage(attack, user)
+    # def use_attack(self, attack: Action, opponent: Entity):
+    #     damage = self.calc_damage(attack, self)
 
-        opponent.health -= damage[0]
+    #     opponent.health -= damage[0]
         
-        self.print_attack(attack, opponent)
+    #     self.print_attack(attack, opponent)
 
-        if damage[1]:
-            super().print_crit_hit()
+    #     if damage[1]:
+    #         super().print_crit_hit()
         
-        opponent.print_damaged(damage[0])
+    #     opponent.print_damaged(damage[0])
 
