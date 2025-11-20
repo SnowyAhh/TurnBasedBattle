@@ -1,13 +1,16 @@
 from battle_types.entity import Entity
 from battle_types.initalise_items import item_list
 from battle_types.item import ItemTypes
+from battle_types.initalise_actions import action_list
+from battle_types.action import Action
 
 class Player(Entity):
     def __init__(self) -> None:
         # Set starting stats
         self.items = self.initalise_items()
         super().__init__(health=100, attack=20, name="You", 
-                         crit_damage=1.5, crit_rate=0.25, speed=100)
+                         crit_damage=1.5, crit_rate=0.25, speed=100, 
+                         actions=self.initalise_actions())
     
     def initalise_items(self) -> list:
         i_list = [
@@ -24,6 +27,14 @@ class Player(Entity):
     
         return i_list
     
+    def initalise_actions(self) -> list:
+        a_list = [
+            action_list.get("physical_attack_punch"),
+            action_list.get("physical_attack_stab")
+        ]
+
+        return a_list
+
     def decrease_item(self, index) -> None:
         self.items[index][1] -= 1
 
@@ -31,11 +42,27 @@ class Player(Entity):
         if (self.items[index][1] == 0):
             self.items.pop(index)
 
-    def print_attack(self, opponent: Entity) -> None:
-        print("{name} attack {oppo}!".format(name = self.name, oppo = opponent.name))
+    def print_attack(self, action: Action, opponent: Entity) -> None:
+        print("{name} use {action} on {oppo}!".format(
+            name = self.name, action = action.name, oppo = opponent.name
+        ))
 
     def print_damaged(self, damage: int) -> None:
         print("{name} take {dmg} damage!".format(name = self.name, dmg = damage))
+    
+    # Needs to be in player class because of print attack
+    def use_attack(self, attack: Action, user: Entity, opponent: Entity):
+        damage = self.calc_damage(attack, user)
+
+        opponent.health -= damage[0]
+        
+        self.print_attack(attack, opponent)
+
+        if damage[1]:
+            super().print_crit_hit()
+        
+        opponent.print_damaged(damage[0])
+
 
     def use_health_item(self, index: int) -> bool:
         print("Used {name}. Restored {points} hp!".format(
@@ -129,5 +156,4 @@ class Player(Entity):
                 return self.use_speed_item(index)
             case _:
                 raise ValueError("Invalid choice")
-
     
