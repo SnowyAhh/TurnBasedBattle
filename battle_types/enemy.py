@@ -14,20 +14,18 @@ class Enemy(Entity):
         if isinstance(opponent, Player):
             print("{name} uses {action} on you!".format(name = self.name, action = action.name))
         else: 
-            print("{name} used {action} on {oppo}!".format(name = self.name, action = action.name, oppo = opponent.name))
+            print("{name} uses {action} on {oppo}!".format(name = self.name, action = action.name, oppo = opponent.name))
 
     def print_damaged(self, damage: int) -> None:
         print("{name} takes {dmg} damage!".format(name = self.name, dmg = damage))
     
-    # def use_attack(self, attack: Action, opponent: Entity):
-    #     damage = self.calc_damage(attack, self)
+    def print_heal(self, action: Action, healed: int, is_crit: bool) -> None:
+        print("{name} uses {action}".format(
+            name = self.name, action = action.name
+        ))
 
-    #     opponent.health -= damage[0]
+        if is_crit:
+            print("Received extra health!")
         
-    #     self.print_attack(attack, opponent)
-
-    #     if damage[1]:
-    #         super().print_crit_hit()
-        
-    #     opponent.print_damaged(damage[0])
+        print("Healed {hp} hp!".format(hp = healed))
 

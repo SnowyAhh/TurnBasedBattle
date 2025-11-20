@@ -3,7 +3,6 @@ import random
 from battle_types.entity import Entity
 from battle_types.enemy import Enemy
 from battle_types.player import Player
-from battle_types.item import ItemTypes
 from battle_types.initalise_actions import action_list
 from battle_types.action import Action
 
@@ -32,18 +31,18 @@ class Battle:
         print("A {e} suddenly appears!".format(e = self.enemy.name))
 
     def print_menu(self) -> None:
-        print("---Round {number}---\n".format(number = self.round))
+        print("\n---Round {number}---".format(number = self.round))
         self.enemy.print_basic_stats()
         self.player.print_basic_stats()
         print("--Choose your move--")
-        print(f"{"1. Attack":20s}2. Use Item")
+        print(f"{"1. Act":20s}2. Use Item")
         print(f"{"3. Check stats":20s}4. Run away")
     
     def print_stats(self) -> None:
         print("Stats:")
         self.enemy.print_all_stats()
         self.player.print_all_stats()
-        print("")
+        print()
         
         # Wait for the player to choose to go back
         print("Go back now? (Y)")

@@ -51,10 +51,15 @@ class Player(Entity):
     def print_damaged(self, damage: int) -> None:
         print("{name} take {dmg} damage!".format(name = self.name, dmg = damage))
     
-    # # Needs to be in player class because of print attack
-    # def use_attack(self, attack: Action, opponent: Entity):
-        
+    def print_heal(self, action: Action, healed: int, is_crit: bool) -> None:
+        print("{name} use {action}".format(
+            name = self.name, action = action.name
+        ))
 
+        if is_crit:
+            print("Received extra health!")
+        
+        print("Healed {hp} hp!".format(hp = healed))
 
     def use_health_item(self, index: int) -> bool:
         print("Used {name}. Restored {points} hp!".format(
