@@ -1,7 +1,7 @@
 import random
 
 from battle_types.action import Action
-from battle_types.initalise_actions import ActionTypes
+from battle_types.initalise_actions import *
 
 class Entity:
     def __init__(self, health: int, attack: int, name: str, crit_damage: float,
@@ -19,7 +19,8 @@ class Entity:
     
     def print_basic_stats(self) -> None:
         print("--{name}--".format(name = self.name))
-        print(f"{f"Health: {int(self.health)}":20s}Attack:{self.attack}")
+        print(f"{f"Health: {int(self.health)}":20s}Attack:{int(self.attack)}")
+        print(f"{f"Stamina: {int(self.stamina)}":20s}Mana: {int(self.mana)}")
     
     def print_all_stats(self) -> None:
         self.print_basic_stats()
@@ -33,6 +34,12 @@ class Entity:
         pass
     
     def print_damaged(self, damage: int) -> None:
+        pass
+
+    def print_not_enough_stamina(self, action: Action) -> None:
+        pass
+
+    def print_not_enough_mana(self, action: Action) -> None:
         pass
 
     # Returns array (damage, is_crit)
@@ -83,7 +90,37 @@ class Entity:
         
         self.health += healed[0]
 
-    def use_action(self, action: Action, opponent: Entity):
+    def use_action(self, action: Action, opponent: Entity) -> None:
+        # See if there is enough stamina/mana to do the action
+        # Physical uses stamina, magical uses mana
+        if (action.category == ActionCategories.PHYSICAL):
+            if (self.stamina - action.points_used <= 0):
+                # Chance of using it 
+                chance = int(self.stamina / action.points_used * 100)
+                
+                if (random.randint(1, 100) > chance):
+                    self.print_not_enough_stamina(action)
+                    return
+
+                # Continue and do the action
+                self.stamina = 0
+            else:
+                self.stamina -= action.points_used
+        else:
+            if (self.mana - action.points_used <= 0):
+                # Chance of using it 
+                chance = int(self.mana / action.points_used * 100)
+                
+                if (random.randint(1, 100) > chance):
+                    self.print_not_enough_mana(action)
+                    return
+
+                # Continue and do the action
+                self.mana = 0
+            else:
+                self.mana -= action.points_used
+
+
         if (action.type == ActionTypes.HEALTH):
             self.use_heal(action)
         elif (action.type == ActionTypes.ATTACK):

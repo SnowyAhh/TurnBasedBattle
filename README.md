@@ -17,3 +17,7 @@ player.health * action.points_given
 
 For critical heals, hp healed is calculated by:
 (player.health * action.points_given) * player.crit_damage
+
+## Stamina/Mana
+To calculate the chance of using a move when there is not enough stamina or mana is:
+(amount of stamina/mana left) / (amount of stamania/mana needed)

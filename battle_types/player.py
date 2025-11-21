@@ -45,22 +45,24 @@ class Player(Entity):
             self.items.pop(index)
 
     def print_attack(self, action: Action, opponent: Entity) -> None:
-        print("{name} use {action} on {oppo}!".format(
-            name = self.name, action = action.name, oppo = opponent.name
-        ))
+        print(f"{self.name} use {action.name} on {opponent.name}!")
 
     def print_damaged(self, damage: int) -> None:
-        print("{name} take {dmg} damage!".format(name = self.name, dmg = damage))
+        print(f"{self.name} take {damage} damage!")
     
     def print_heal(self, action: Action, healed: int, is_crit: bool) -> None:
-        print("{name} use {action}".format(
-            name = self.name, action = action.name
-        ))
+        print(f"{self.name} use {action.name}")
 
         if is_crit:
             print("Received extra health!")
         
-        print("Healed {hp} hp!".format(hp = healed))
+        print(f"Healed {healed} hp!")
+
+    def print_not_enough_stamina(self, action: Action) -> None:
+        print(f"You try to use {action.name} but you don't have enough stamina")
+    
+    def print_not_enough_mana(self, action: Action) -> None:
+        print(f"You try to use {action.name} but you don't have enough mana")
 
     def use_health_item(self, index: int) -> bool:
         print("Used {name}. Restored {points} hp!".format(

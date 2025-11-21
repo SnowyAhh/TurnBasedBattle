@@ -12,20 +12,24 @@ class Enemy(Entity):
 
     def print_attack(self, action: Action, opponent: Entity) -> None:
         if isinstance(opponent, Player):
-            print("{name} uses {action} on you!".format(name = self.name, action = action.name))
+            print(f"{self.name} uses {action.name} on you!")
         else: 
-            print("{name} uses {action} on {oppo}!".format(name = self.name, action = action.name, oppo = opponent.name))
+            print(f"{self.name} uses {action.name} on {opponent.name}!")
 
     def print_damaged(self, damage: int) -> None:
-        print("{name} takes {dmg} damage!".format(name = self.name, dmg = damage))
+        print(f"{self.name} takes {damage} damage!")
     
     def print_heal(self, action: Action, healed: int, is_crit: bool) -> None:
-        print("{name} uses {action}".format(
-            name = self.name, action = action.name
-        ))
+        print(f"{self.name} uses {action.name}")
 
         if is_crit:
             print("Received extra health!")
         
-        print("Healed {hp} hp!".format(hp = healed))
+        print(f"Healed {healed} hp!")
+    
+    def print_not_enough_stamina(self, action: Action) -> None:
+        print(f"{self.name} tries to use {action.name} but they don't have enough stamina")
+    
+    def print_not_enough_mana(self, action: Action) -> None:
+        print(f"{self.name} tries to use {action.name} but they don't have enough mana")
 
