@@ -19,7 +19,7 @@ class Battle:
         a_list = [
             action_list.get("physical_attack_punch"),
             action_list.get("physical_attack_stab"),
-            action_list.get("magic_health_heal")
+            action_list.get("magical_health_heal")
         ]
 
         enemy = Enemy(health=100, attack=10, name="Thief", 

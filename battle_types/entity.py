@@ -35,7 +35,7 @@ class Entity:
     # Returns array (damage, is_crit)
     def calc_damage(self, action: Action) -> list:
         is_crit = False
-        damage = self.attack + action.points
+        damage = self.attack + action.points_given
 
         # See if attacker will do a crit attack
         number: int = random.randint(1, 100)
@@ -62,7 +62,7 @@ class Entity:
     # Returns array (healed, is_crit)
     def calc_heal(self, heal: Action) -> list:
         is_crit = False
-        healed = int(self.health * heal.points)
+        healed = int(self.health * heal.points_given)
 
         # See if user will do a crit heal
         number: int = random.randint(1, 100)
