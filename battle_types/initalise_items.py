@@ -15,4 +15,7 @@ item_list = {
     "potion_cdmg_sml": Item("Small crit damage potion", ItemTypes.CRIT_DAMAGE, 0.1, "Increases crit damage by 0.1"),
     "potion_cdmg_med": Item("Medium crit damage potion", ItemTypes.CRIT_DAMAGE, 0.40, "Increases crit rate by 0.40"),
     "potion_cdmg_lrg": Item("Large crit damage potion", ItemTypes.CRIT_DAMAGE, 1.0, "Increases crit rate by 1.0"),
+    "potion_speed_sml": Item("Small speed potion", ItemTypes.SPEED, 10, "Increases speed by 10"),
+    "potion_speed_med": Item("Medium speed potion", ItemTypes.SPEED, 30, "Increases speed by 30"),
+    "potion_speed_lrg": Item("Large speed potion", ItemTypes.SPEED, 50, "Increases speed by 50"),
 }

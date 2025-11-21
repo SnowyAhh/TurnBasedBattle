@@ -1,13 +1,16 @@
 from battle_types.entity import Entity
 from battle_types.initalise_items import item_list
 from battle_types.item import ItemTypes
+from battle_types.initalise_actions import action_list
+from battle_types.action import Action
 
 class Player(Entity):
     def __init__(self) -> None:
         # Set starting stats
         self.items = self.initalise_items()
         super().__init__(health=100, attack=20, name="You", 
-                         crit_damage=1.5, crit_rate=0.25, speed=100)
+                         crit_damage=1.5, crit_rate=0.25, speed=100, 
+                         actions=self.initalise_actions())
     
     def initalise_items(self) -> list:
         i_list = [
@@ -19,10 +22,21 @@ class Player(Entity):
                     [item_list.get("potion_rate_lrg"), 3],
                     [item_list.get("potion_cdmg_sml"), 4],
                     [item_list.get("potion_cdmg_lrg"), 2],
+                    [item_list.get("potion_speed_lrg"), 4],
                 ]
     
         return i_list
     
+    def initalise_actions(self) -> list:
+        a_list = [
+            action_list.get("physical_attack_punch"),
+            action_list.get("physical_attack_stab"),
+            action_list.get("magic_health_heal"),
+            action_list.get("magic_attack_air_blast")
+        ]
+
+        return a_list
+
     def decrease_item(self, index) -> None:
         self.items[index][1] -= 1
 
@@ -30,11 +44,23 @@ class Player(Entity):
         if (self.items[index][1] == 0):
             self.items.pop(index)
 
-    def print_attack(self, opponent: Entity) -> None:
-        print("{name} attack {oppo}!".format(name = self.name, oppo = opponent.name))
+    def print_attack(self, action: Action, opponent: Entity) -> None:
+        print("{name} use {action} on {oppo}!".format(
+            name = self.name, action = action.name, oppo = opponent.name
+        ))
 
     def print_damaged(self, damage: int) -> None:
         print("{name} take {dmg} damage!".format(name = self.name, dmg = damage))
+    
+    def print_heal(self, action: Action, healed: int, is_crit: bool) -> None:
+        print("{name} use {action}".format(
+            name = self.name, action = action.name
+        ))
+
+        if is_crit:
+            print("Received extra health!")
+        
+        print("Healed {hp} hp!".format(hp = healed))
 
     def use_health_item(self, index: int) -> bool:
         print("Used {name}. Restored {points} hp!".format(
@@ -100,6 +126,19 @@ class Player(Entity):
         self.decrease_item(index)
 
         return True
+    
+    def use_speed_item(self, index: int) -> bool:
+        print("Used {name}. Increased speed by {points}!".format(
+            name = self.items[index][0].name,
+            points = self.items[index][0].points
+        ))
+
+        # Increase speed
+        self.speed += self.items[index][0].points
+        # Decrease quantity
+        self.decrease_item(index)
+
+        return True
 
     def use_item(self, index: int) -> bool:
         match self.items[index][0].type:
@@ -111,7 +150,8 @@ class Player(Entity):
                 return self.use_rate_item(index)
             case ItemTypes.CRIT_DAMAGE:
                 return self.use_cdmg_item(index)
+            case ItemTypes.SPEED:
+                return self.use_speed_item(index)
             case _:
                 raise ValueError("Invalid choice")
-
     

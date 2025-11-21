@@ -3,7 +3,8 @@ import random
 from battle_types.entity import Entity
 from battle_types.enemy import Enemy
 from battle_types.player import Player
-from battle_types.item import ItemTypes
+from battle_types.initalise_actions import action_list
+from battle_types.action import Action
 
 class Battle:
     # Battle file, shows moves, damage, health
@@ -15,7 +16,14 @@ class Battle:
     # Randomises an enemy
     def generate_enemy(self) -> Enemy:
         # For now, it'll generate a set stat enemy
-        enemy = Enemy(health=100, attack=10, name="Thief", crit_damage=1.5, crit_rate=0.2, speed=100)
+        a_list = [
+            action_list.get("physical_attack_punch"),
+            action_list.get("physical_attack_stab"),
+            action_list.get("magic_health_heal")
+        ]
+
+        enemy = Enemy(health=100, attack=10, name="Thief", 
+                      crit_damage=1.5, crit_rate=0.2, speed=100, actions=a_list)
         return enemy
 
     # Menu prints
@@ -23,18 +31,18 @@ class Battle:
         print("A {e} suddenly appears!".format(e = self.enemy.name))
 
     def print_menu(self) -> None:
-        print("---Round {number}---\n".format(number = self.round))
+        print("\n---Round {number}---".format(number = self.round))
         self.enemy.print_basic_stats()
         self.player.print_basic_stats()
         print("--Choose your move--")
-        print(f"{"1. Attack":20s}2. Use Item")
+        print(f"{"1. Act":20s}2. Use Item")
         print(f"{"3. Check stats":20s}4. Run away")
     
     def print_stats(self) -> None:
         print("Stats:")
         self.enemy.print_all_stats()
         self.player.print_all_stats()
-        print("")
+        print()
         
         # Wait for the player to choose to go back
         print("Go back now? (Y)")
@@ -48,19 +56,21 @@ class Battle:
             print("Invalid choice, try again: ")
             choice = input()
         return choice
-
-    # Attack
-    def print_attack(self, attacker: Entity, 
-                     opponent: Entity, damage: int) -> None:
-        attacker.print_attack(opponent)
-
-        # Print critical hit if it occurs
-        if (damage != attacker.attack):
-            attacker.print_crit_hit()
-
-        opponent.print_damaged(damage)
-        print()
     
+    # Action
+    def get_action(self) -> str:
+        num_arr = ["q", "Q"]
+        print("\nChoose an action, or q to go back")
+    
+        for i in range(len(self.player.actions)):
+            num_arr.append(str(i + 1))
+            print("{i}. {name} - {description}".format(
+                i = i + 1, name = self.player.actions[i].name, 
+                description = self.player.actions[i].description
+            ))
+        
+        return self.get_menu_input(num_arr)
+
     def calc_damage(self, attacker: Entity) -> int:
         damage = attacker.attack
 
@@ -73,48 +83,52 @@ class Battle:
         # Otherwise, damage = attack
         return damage
 
-    def attack(self, attacker: Entity, opponent: Entity) -> None:
-        damage = self.calc_damage(attacker)
-
-        opponent.health -= damage
-        
-        self.print_attack(attacker, opponent, damage)
-
-    def player_attacks_first(self) -> bool:
-        self.attack(self.player, self.enemy)
+    def player_acts_first(self, player_action: Action, enemy_action: Action) -> bool:
+        self.player.use_action(player_action, self.enemy)
 
         if self.enemy.health <= 0:
             return True
         
-        self.attack(self.enemy, self.player)
+        self.enemy.use_action(enemy_action, self.player)
 
         return True
     
-    def enemy_attacks_first(self) -> bool:
-        self.attack(self.enemy, self.player)
+    def enemy_acts_first(self, player_action: Action, enemy_action: Action) -> bool:
+        self.enemy.use_action(enemy_action, self.player)
 
         if self.player.health <= 0:
             return True
         
-        self.attack(self.player, self.enemy)
+        self.player.use_action(player_action, self.enemy)
 
         return True
 
     # Speed is incorporated into attacks
     def speed_attack(self) -> bool:
+        # Get action first
+        choice = self.get_action()
+
+        if (choice == "Q" or choice == "q"):
+            return False
+        
+        player_action = self.player.actions[int(choice) - 1]
+
+        # Get enemy action
+        enemy_action = self.enemy.choose_action()
+
         if (self.player.speed < self.enemy.speed):
-            return self.enemy_attacks_first()
+            return self.enemy_acts_first(player_action, enemy_action)
         elif (self.player.speed > self.enemy.speed):
-            return self.player_attacks_first()
+            return self.player_acts_first(player_action, enemy_action)
         else: 
             # player.speed == enemy.speed
             # 50/50 chance between the two on who goes first
             number: int = random.randint(1, 2)
 
             if number == 1:
-                return self.player_attacks_first()
+                return self.enemy_acts_first(player_action, enemy_action)
             else:
-                return self.enemy_attacks_first()
+                return self.player_acts_first(player_action, enemy_action)
 
 
     # Run away
@@ -188,7 +202,11 @@ class Battle:
 
             match choice:
                 case "1":
-                    enemy_has_already_attacked = self.speed_attack() 
+                    enemy_has_already_attacked = self.speed_attack()
+
+                    # Player chose to quit out of action menu
+                    if not enemy_has_already_attacked:
+                        continue
                 case "2":
                     # Use item
                     success = self.use_item()
@@ -226,7 +244,8 @@ class Battle:
             
             # Attacks only if player has successfully used item or failed to run away
             if not enemy_has_already_attacked:
-                self.attack(self.enemy, self.player)
+                action = self.enemy.choose_action()
+                self.enemy.use_action(action, self.player)
             
             enemy_has_already_attacked = False
 
