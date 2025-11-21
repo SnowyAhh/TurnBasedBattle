@@ -23,6 +23,8 @@ class Player(Entity):
                     [item_list.get("potion_cdmg_sml"), 4],
                     [item_list.get("potion_cdmg_lrg"), 2],
                     [item_list.get("potion_speed_lrg"), 4],
+                    [item_list.get("potion_stamina_med"), 3],
+                    [item_list.get("potion_mana_lrg"), 2],
                 ]
     
         return i_list
@@ -165,6 +167,56 @@ class Player(Entity):
         self.decrease_item(index)
 
         return True
+    
+    def use_stamina_item(self, index: int) -> bool:
+        if (self.stamina >= self.max_stamina):
+            print("Used {name}. But it failed! Already have max stamina".format(
+                name = self.items[index][0].name
+            ))
+        elif (self.stamina + self.items[index][0].points > self.max_mana):
+            print("Used {name}. Increased stamina by {points}!".format(
+                name = self.items[index][0].name,
+                points = self.max_stamina - self.stamina
+            ))
+
+            self.stamina = self.max_stamina
+        else: 
+            print("Used {name}. Increased stamina by {points}!".format(
+                name = self.items[index][0].name,
+                points = self.items[index][0].points
+            ))
+
+            self.stamina += self.items[index][0].points
+
+        # Decrease quantity
+        self.decrease_item(index)
+
+        return True
+
+    def use_mana_item(self, index: int) -> bool:
+        if (self.mana >= self.max_mana):
+            print("Used {name}. But it failed! Already have max mana".format(
+                name = self.items[index][0].name
+            ))
+        elif (self.mana + self.items[index][0].points > self.max_mana):
+            print("Used {name}. Increased mana by {points}!".format(
+                name = self.items[index][0].name,
+                points = self.max_mana - self.mana
+            ))
+
+            self.mana = self.max_mana
+        else: 
+            print("Used {name}. Increased mana by {points}!".format(
+                name = self.items[index][0].name,
+                points = self.items[index][0].points
+            ))
+
+            self.mana += self.items[index][0].points
+
+        # Decrease quantity
+        self.decrease_item(index)
+
+        return True
 
     def use_item(self, index: int) -> bool:
         match self.items[index][0].type:
@@ -178,6 +230,10 @@ class Player(Entity):
                 return self.use_cdmg_item(index)
             case ItemTypes.SPEED:
                 return self.use_speed_item(index)
+            case ItemTypes.STAMINA:
+                return self.use_stamina_item(index)
+            case ItemTypes.MANA:
+                return self.use_mana_item(index)
             case _:
                 raise ValueError("Invalid choice")
     

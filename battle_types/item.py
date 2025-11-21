@@ -5,7 +5,9 @@ class ItemTypes(Enum):
     ATTACK = 2,
     CRIT_RATE = 3,
     CRIT_DAMAGE = 4,
-    SPEED = 5
+    SPEED = 5,
+    STAMINA = 6,
+    MANA = 7
 
 class Item:
     def __init__(self, name: str, type: ItemTypes, points: float | int, 

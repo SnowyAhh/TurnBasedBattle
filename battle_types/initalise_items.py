@@ -18,4 +18,10 @@ item_list = {
     "potion_speed_sml": Item("Small speed potion", ItemTypes.SPEED, 10, "Increases speed by 10"),
     "potion_speed_med": Item("Medium speed potion", ItemTypes.SPEED, 30, "Increases speed by 30"),
     "potion_speed_lrg": Item("Large speed potion", ItemTypes.SPEED, 50, "Increases speed by 50"),
+    "potion_stamina_sml": Item("Small stamina potion", ItemTypes.STAMINA, 10, "Increases stamina by 10"),
+    "potion_stamina_med": Item("Medium stamina potion", ItemTypes.STAMINA, 20, "Increases stamina by 20"),
+    "potion_stamina_lrg": Item("Large stamina potion", ItemTypes.STAMINA, 30, "Increases stamina by 30"),
+    "potion_mana_sml": Item("Small mana potion", ItemTypes.MANA, 10, "Increases mana by 10"),
+    "potion_mana_med": Item("Medium mana potion", ItemTypes.MANA, 20, "Increases mana by 20"),
+    "potion_mana_lrg": Item("Large mana potion", ItemTypes.MANA, 30, "Increases mana by 30"),
 }
