@@ -31,7 +31,8 @@ class Player(Entity):
         a_list = [
             action_list.get("physical_attack_punch"),
             action_list.get("physical_attack_stab"),
-            action_list.get("magic_health_heal")
+            action_list.get("magic_health_heal"),
+            action_list.get("magic_attack_air_blast")
         ]
 
         return a_list
