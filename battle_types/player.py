@@ -1,7 +1,7 @@
 from battle_types.entity import Entity
 from battle_types.initalise_items import item_list
 from battle_types.item import ItemTypes
-from battle_types.initalise_actions import action_list
+from battle_types.initalise_actions import *
 from battle_types.action import Action
 
 class Player(Entity):
@@ -32,7 +32,8 @@ class Player(Entity):
             action_list.get("physical_attack_punch"),
             action_list.get("physical_attack_stab"),
             action_list.get("magical_health_heal"),
-            action_list.get("magical_attack_air_blast")
+            action_list.get("magical_attack_air_blast"),
+            action_list.get("other_recover_wait")
         ]
 
         return a_list
@@ -63,6 +64,29 @@ class Player(Entity):
     
     def print_not_enough_mana(self, action: Action) -> None:
         print(f"You try to use {action.name} but you don't have enough mana")
+    
+    def print_actions(self) -> list:
+        num_arr = []
+
+        for i in range(len(self.actions)):
+            num_arr.append(str(i + 1))
+            print("{i}. {name} ({points} {type}) - {description}".format(
+                i = i + 1, name = self.actions[i].name, 
+                points = self.actions[i].points_used,
+                type = "stamina" if self.actions[i].category == ActionCategories.PHYSICAL else "mana",
+                description = self.actions[i].description
+            ))
+        
+        return num_arr
+
+    def print_recover_stamina(self, amount: int) -> None:
+        print(f"You recover {amount} stamina")
+
+    def print_recover_mana(self, amount: int) -> None:
+        print(f"You recover {amount} mana")
+    
+    def print_wait(self) -> None:
+        print("You wait a turn")
 
     def use_health_item(self, index: int) -> bool:
         print("Used {name}. Restored {points} hp!".format(

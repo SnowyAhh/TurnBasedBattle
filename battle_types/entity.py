@@ -14,6 +14,9 @@ class Entity:
         self.crit_rate = crit_rate
         self.speed = speed
         self.actions = actions
+        # Given max stamina and mana
+        self.max_stamina = stamina
+        self.max_mana = mana
         self.stamina = stamina
         self.mana = mana
     
@@ -40,6 +43,15 @@ class Entity:
         pass
 
     def print_not_enough_mana(self, action: Action) -> None:
+        pass
+
+    def print_recover_stamina(self, amount: int) -> None:
+        pass
+
+    def print_recover_mana(self, amount: int) -> None:
+        pass
+
+    def print_wait(self) -> None:
         pass
 
     # Returns array (damage, is_crit)
@@ -89,12 +101,17 @@ class Entity:
         self.print_heal(heal, healed[0], healed[1])
         
         self.health += healed[0]
+    
+    def use_recover(self, recover: Action) -> None:
+        self.print_wait()
+        self.recover_stamina_and_mana_partial(
+            int(recover.points_given), int(recover.points_given))
 
     def use_action(self, action: Action, opponent: Entity) -> None:
         # See if there is enough stamina/mana to do the action
         # Physical uses stamina, magical uses mana
         if (action.category == ActionCategories.PHYSICAL):
-            if (self.stamina - action.points_used <= 0):
+            if (self.stamina - action.points_used < 0):
                 # Chance of using it 
                 chance = int(self.stamina / action.points_used * 100)
                 
@@ -106,8 +123,8 @@ class Entity:
                 self.stamina = 0
             else:
                 self.stamina -= action.points_used
-        else:
-            if (self.mana - action.points_used <= 0):
+        elif (action.category == ActionCategories.MAGICAL):
+            if (self.mana - action.points_used < 0):
                 # Chance of using it 
                 chance = int(self.mana / action.points_used * 100)
                 
@@ -125,3 +142,21 @@ class Entity:
             self.use_heal(action)
         elif (action.type == ActionTypes.ATTACK):
             self.use_attack(action, opponent)
+        elif (action.type == ActionTypes.RECOVER):
+            self.use_recover(action)
+    
+    def recover_stamina_and_mana_partial(self, recover_stamina: int, 
+                                         recover_mana: int) -> None:
+        if (self.stamina + recover_stamina >= self.max_stamina):
+            self.print_recover_stamina(self.max_stamina - self.stamina)
+            self.stamina = self.max_stamina
+        else:
+            self.stamina += recover_stamina
+            self.print_recover_stamina(recover_stamina)
+
+        if (self.mana + recover_mana >= self.max_mana):
+            self.print_recover_mana(self.max_stamina - self.stamina)
+            self.mana = self.max_mana
+        else:
+            self.mana += recover_mana
+            self.print_recover_mana(recover_mana)

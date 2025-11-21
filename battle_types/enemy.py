@@ -32,4 +32,7 @@ class Enemy(Entity):
     
     def print_not_enough_mana(self, action: Action) -> None:
         print(f"{self.name} tries to use {action.name} but they don't have enough mana")
+    
+    def print_wait(self) -> None:
+        print(f"{self.name} waits a turn")
 

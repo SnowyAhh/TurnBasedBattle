@@ -3,6 +3,7 @@ from enum import Enum
 class ActionTypes(Enum):
     HEALTH = 1, # Heals self
     ATTACK = 2, # Attacks opponent
+    RECOVER = 3 # Recover stamina and mana
 
 class ActionCategories(Enum):
     PHYSICAL = 1,

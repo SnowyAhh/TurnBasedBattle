@@ -19,7 +19,8 @@ class Battle:
         a_list = [
             action_list.get("physical_attack_punch"),
             action_list.get("physical_attack_stab"),
-            action_list.get("magical_health_heal")
+            action_list.get("magical_health_heal"),
+            action_list.get("other_recover_wait")
         ]
 
         enemy = Enemy(health=100, attack=10, name="Thief", 
@@ -60,15 +61,11 @@ class Battle:
     
     # Action
     def get_action(self) -> str:
-        num_arr = ["q", "Q"]
         print("\nChoose an action, or q to go back")
     
-        for i in range(len(self.player.actions)):
-            num_arr.append(str(i + 1))
-            print("{i}. {name} - {description}".format(
-                i = i + 1, name = self.player.actions[i].name, 
-                description = self.player.actions[i].description
-            ))
+        num_arr = self.player.print_actions()
+        num_arr.append("Q")
+        num_arr.append("q")
         
         return self.get_menu_input(num_arr)
 
@@ -247,6 +244,11 @@ class Battle:
             if not enemy_has_already_attacked:
                 action = self.enemy.choose_action()
                 self.enemy.use_action(action, self.player)
+
+            # Recover stamina and mana for enemy and player at the end of the round
+            print("--End of turn recovery--")
+            self.player.recover_stamina_and_mana_partial(5, 5)
+            self.enemy.recover_stamina_and_mana_partial(5, 5)
             
             enemy_has_already_attacked = False
 
