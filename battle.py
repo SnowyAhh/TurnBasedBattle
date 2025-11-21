@@ -194,7 +194,7 @@ class Battle:
         
         self.print_start()
         enemy_has_already_attacked = False
-        while (self.enemy.health != 0 and self.player.health != 0):
+        while (self.enemy.health > 0 and self.player.health > 0):
             self.print_menu()
             choice = self.get_menu_input(menu_choices_list)
 
@@ -237,7 +237,7 @@ class Battle:
                     print("Invalid choice selected")
                     continue
             
-            if (self.enemy.health <= 0):
+            if (self.enemy.health <= 0 or self.player.health <= 0):
                 break
             
             # Attacks only if player has successfully used item or failed to run away
