@@ -89,7 +89,7 @@ class Battle:
         if self.enemy.health <= 0:
             return True
         
-        self.enemy.use_action(player_action, self.player)
+        self.enemy.use_action(enemy_action, self.player)
 
         return True
     
