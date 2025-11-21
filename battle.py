@@ -23,7 +23,8 @@ class Battle:
         ]
 
         enemy = Enemy(health=100, attack=10, name="Thief", 
-                      crit_damage=1.5, crit_rate=0.2, speed=100, actions=a_list)
+                      crit_damage=1.5, crit_rate=0.2, speed=100, actions=a_list,
+                      stamina=100, mana=100)
         return enemy
 
     # Menu prints

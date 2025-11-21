@@ -10,7 +10,7 @@ class Player(Entity):
         self.items = self.initalise_items()
         super().__init__(health=100, attack=20, name="You", 
                          crit_damage=1.5, crit_rate=0.25, speed=100, 
-                         actions=self.initalise_actions())
+                         actions=self.initalise_actions(), stamina=100, mana=100)
     
     def initalise_items(self) -> list:
         i_list = [

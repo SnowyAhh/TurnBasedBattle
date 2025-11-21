@@ -4,8 +4,9 @@ from battle_types.action import Action
 from battle_types.initalise_actions import ActionTypes
 
 class Entity:
-    def __init__(self, health: int, attack: int, name: str, 
-                 crit_damage: float, crit_rate: float, speed: int, actions: list) -> None:
+    def __init__(self, health: int, attack: int, name: str, crit_damage: float,
+                crit_rate: float, speed: int, actions: list, stamina: int,
+                mana: int) -> None:
         self.health = health
         self.attack = attack
         self.name = name
@@ -13,6 +14,8 @@ class Entity:
         self.crit_rate = crit_rate
         self.speed = speed
         self.actions = actions
+        self.stamina = stamina
+        self.mana = mana
     
     def print_basic_stats(self) -> None:
         print("--{name}--".format(name = self.name))
