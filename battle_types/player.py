@@ -72,11 +72,13 @@ class Player(Entity):
 
         for i in range(len(self.actions)):
             num_arr.append(str(i + 1))
-            print("{i}. {name} ({points} {type}) - {description}".format(
+            print("{i}. {name} ({points_used} {cat}) - {description} ({points_given} {type})".format(
                 i = i + 1, name = self.actions[i].name, 
-                points = self.actions[i].points_used,
-                type = "stamina" if self.actions[i].category == ActionCategories.PHYSICAL else "mana",
-                description = self.actions[i].description
+                points_used = self.actions[i].points_used,
+                cat = "stamina" if self.actions[i].category == ActionCategories.PHYSICAL else "mana",
+                description = self.actions[i].description,
+                points_given = self.actions[i].points_given if self.actions[i].type != ActionTypes.HEALTH else str(int(self.actions[i].points_given * 100)) + "%",
+                type = "attack" if self.actions[i].type == ActionTypes.ATTACK else "health" if self.actions[i].type == ActionTypes.HEALTH else "stamina/mana"
             ))
         
         return num_arr
