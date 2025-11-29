@@ -16,7 +16,7 @@ class Travel:
     def print_menu_and_get_input(self, stage: int) -> str:
         accepted = ["1", "2", "Q", "q"]
 
-        print(f"---Stage {stage}---")
+        print(f"\n---Stage {stage}---")
         print("Choose your action:")
         print("1. Move to new area")
         print("2. Check status")
@@ -65,6 +65,10 @@ class Travel:
             match input:
                 case "1":
                     survived = self.chance_encounter()
+
+                    # Reset stamina and mana
+                    self.player.stamina = self.player.max_stamina
+                    self.player.mana = self.player.max_mana
                 case "2":
                     self.player.print_all_stats()
                     print()
