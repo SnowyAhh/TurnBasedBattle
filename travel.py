@@ -14,11 +14,12 @@ class Travel:
         print("Welcome to turn based battle!")
 
     def print_menu_and_get_input(self, stage: int) -> str:
-        accepted = ["1", "Q", "q"]
+        accepted = ["1", "2", "Q", "q"]
 
         print(f"---Stage {stage}---")
         print("Choose your action:")
         print("1. Move to new area")
+        print("2. Check status")
         print("Q: Quit game")
 
         return get_menu_input(accepted)
@@ -63,6 +64,11 @@ class Travel:
             match input:
                 case "1":
                     self.chance_encounter()
+                case "2":
+                    self.player.print_all_stats()
+                    print()
+
+                    continue
                 case "Q" | "q":
                     quit()
                     return
