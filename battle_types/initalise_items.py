@@ -26,4 +26,4 @@ item_list = {
     "potion_mana_lrg": Item("Large mana potion", ItemTypes.MANA, 30, "Increases mana by 30"),
 }
 
-items_values_list = item_list.values()
+items_values_list = list(item_list.values())

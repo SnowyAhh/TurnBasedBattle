@@ -1,6 +1,6 @@
 from battle_types.entity import Entity
 from battle_types.initalise_items import item_list
-from battle_types.item import ItemTypes
+from battle_types.item import ItemTypes, Item
 from battle_types.initalise_actions import *
 from battle_types.action import Action
 
@@ -15,20 +15,16 @@ class Player(Entity):
     def initalise_items(self) -> list:
         i_list = [
                     [item_list.get("potion_hp_sml"), 5], 
-                    [item_list.get("potion_hp_med"), 3],
                     [item_list.get("potion_atk_sml"), 3],
-                    [item_list.get("potion_atk_lrg"), 3],
                     [item_list.get("potion_rate_med"), 5],
-                    [item_list.get("potion_rate_lrg"), 3],
                     [item_list.get("potion_cdmg_sml"), 4],
-                    [item_list.get("potion_cdmg_lrg"), 2],
                     [item_list.get("potion_speed_lrg"), 4],
                     [item_list.get("potion_stamina_med"), 3],
                     [item_list.get("potion_mana_lrg"), 2],
                 ]
     
         return i_list
-    
+
     def initalise_actions(self) -> list:
         a_list = [
             action_list.get("physical_attack_punch"),
@@ -39,6 +35,18 @@ class Player(Entity):
         ]
 
         return a_list
+    
+    def increase_item(self, item: Item, quantity: int) -> None:
+        # Scan item list
+        for i in self.items:
+            if i[0] == item:
+                # If it already in the list, increase quantity
+                i[1] += quantity
+                return
+        
+        # Otherwise append
+        self.items.append([item, quantity])
+        self.items.sort(key=lambda item: (item[0].type, item[0].name))
 
     def decrease_item(self, index) -> None:
         self.items[index][1] -= 1
