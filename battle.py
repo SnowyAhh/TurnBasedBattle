@@ -242,13 +242,13 @@ class Battle:
                     print("Invalid choice selected")
                     continue
             
-            if (self.enemy.health <= 0 or self.player.health <= 0):
-                break
-            
             # Attacks only if player has successfully used item or failed to run away
             if not enemy_has_already_attacked:
                 action = self.enemy.choose_action()
                 self.enemy.use_action(action, self.player)
+
+            if (self.enemy.health <= 0 or self.player.health <= 0):
+                break
 
             # Recover stamina and mana for enemy and player at the end of the round
             print("--End of turn recovery--")
