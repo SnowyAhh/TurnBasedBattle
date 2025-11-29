@@ -1,9 +1,9 @@
 import random
 
 from battle_types.entity import Entity
-from battle_types.enemy import Enemy
+from battle_types.enemy import Enemy, enemy_names
 from battle_types.player import Player
-from battle_types.initalise_actions import action_list
+from battle_types.initalise_actions import action_list, action_values_list
 from battle_types.action import Action
 from util import get_menu_input
 
@@ -18,15 +18,28 @@ class Battle:
     def generate_enemy(self) -> Enemy:
         # For now, it'll generate a set stat enemy
         a_list = [
-            action_list.get("physical_attack_punch"),
-            action_list.get("physical_attack_stab"),
-            action_list.get("magical_health_heal"),
             action_list.get("other_recover_wait")
         ]
 
-        enemy = Enemy(health=100, attack=10, name="Thief", 
-                      crit_damage=1.5, crit_rate=0.2, speed=100, actions=a_list,
-                      stamina=100, mana=100)
+        # Add one to four moves
+        for i in range(0, random.randint(1, 5)):
+            action = action_values_list[i]
+
+            if action in a_list:
+                i -= 1
+                continue
+            
+            a_list.append(action)
+
+        enemy = Enemy(health=random.randint(50, 200), 
+                      attack=random.randint(5, 20), 
+                      name=enemy_names[random.randint(0, len(enemy_names) - 1)], 
+                      crit_damage=1 + random.random(), 
+                      crit_rate=random.random(), 
+                      speed=random.randint(50, 150),
+                      actions=a_list, 
+                      stamina=random.randint(50, 200), 
+                      mana=random.randint(50, 200))
         return enemy
 
     # Menu prints

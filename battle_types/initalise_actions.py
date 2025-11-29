@@ -9,3 +9,5 @@ action_list = {
     "magical_health_heal": Action("Heal", ActionTypes.HEALTH, ActionCategories.MAGICAL, 0.25, 20, "Heals self"),
     "other_recover_wait": Action("Wait", ActionTypes.RECOVER, ActionCategories.PHYSICAL, 20, 0, "Use up a round to recover stamina and mana") 
 }
+
+action_values_list = list(action_list.values())
