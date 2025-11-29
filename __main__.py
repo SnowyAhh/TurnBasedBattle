@@ -1,10 +1,8 @@
-from battle_types.player import Player
-from battle import Battle
-# File for getting terminal input and showing terminal output
+from travel import Travel
+
 def main():
-    player = Player()
-    battle = Battle(player)
-    battle.battle()
+    travel = Travel()
+    travel.travel()
 
 if __name__ == "__main__":
     main()

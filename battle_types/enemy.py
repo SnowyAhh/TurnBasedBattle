@@ -4,6 +4,13 @@ from battle_types.entity import Entity
 from battle_types.player import Player
 from battle_types.action import Action
 
+enemy_names = [
+    "Thief",
+    "Pirate",
+    "Mage",
+    "Warrior"
+]
+
 class Enemy(Entity):
     def choose_action(self) -> Action:
         num_moves = len(self.actions)

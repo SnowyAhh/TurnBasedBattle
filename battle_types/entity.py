@@ -27,7 +27,7 @@ class Entity:
     
     def print_all_stats(self) -> None:
         self.print_basic_stats()
-        print(f"{f"Crit Rate: {self.crit_rate:.2f}":20s}Crit Damage:{self.crit_damage}")
+        print(f"{f"Crit Rate: {self.crit_rate:.2f}":20s}Crit Damage:{self.crit_damage:.2f}")
         print(f"Speed: {self.speed}")
     
     def print_attack(self, action: Action, opponent: Entity) -> None:

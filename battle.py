@@ -1,10 +1,11 @@
 import random
 
 from battle_types.entity import Entity
-from battle_types.enemy import Enemy
+from battle_types.enemy import Enemy, enemy_names
 from battle_types.player import Player
-from battle_types.initalise_actions import action_list
+from battle_types.initalise_actions import action_list, action_values_list
 from battle_types.action import Action
+from util import get_menu_input
 
 class Battle:
     # Battle file, shows moves, damage, health
@@ -17,15 +18,28 @@ class Battle:
     def generate_enemy(self) -> Enemy:
         # For now, it'll generate a set stat enemy
         a_list = [
-            action_list.get("physical_attack_punch"),
-            action_list.get("physical_attack_stab"),
-            action_list.get("magical_health_heal"),
             action_list.get("other_recover_wait")
         ]
 
-        enemy = Enemy(health=100, attack=10, name="Thief", 
-                      crit_damage=1.5, crit_rate=0.2, speed=100, actions=a_list,
-                      stamina=100, mana=100)
+        # Add one to four moves
+        for i in range(0, random.randint(1, 5)):
+            action = action_values_list[i]
+
+            if action in a_list:
+                i -= 1
+                continue
+            
+            a_list.append(action)
+
+        enemy = Enemy(health=random.randint(50, 200), 
+                      attack=random.randint(5, 20), 
+                      name=enemy_names[random.randint(0, len(enemy_names) - 1)], 
+                      crit_damage=1 + random.random(), 
+                      crit_rate=random.random(), 
+                      speed=random.randint(50, 150),
+                      actions=a_list, 
+                      stamina=random.randint(50, 200), 
+                      mana=random.randint(50, 200))
         return enemy
 
     # Menu prints
@@ -48,16 +62,7 @@ class Battle:
         
         # Wait for the player to choose to go back
         print("Go back now? (Y)")
-        self.get_menu_input(["Y", "y"])
-
-    # Check input
-    def get_menu_input(self, accepted: list[str]) -> str:
-        choice = ""
-        choice = input()
-        while choice not in accepted:
-            print("Invalid choice, try again: ")
-            choice = input()
-        return choice
+        get_menu_input(["Y", "y"])
     
     # Action
     def get_action(self) -> str:
@@ -67,7 +72,7 @@ class Battle:
         num_arr.append("Q")
         num_arr.append("q")
         
-        return self.get_menu_input(num_arr)
+        return get_menu_input(num_arr)
 
     def calc_damage(self, attacker: Entity) -> int:
         damage = attacker.attack
@@ -142,7 +147,7 @@ class Battle:
         menu_confirmation_list = ["Y", "y", "n", "N"]
         print("Are you sure you want to run? (Y/N)")
         
-        choice = self.get_menu_input(menu_confirmation_list)
+        choice = get_menu_input(menu_confirmation_list)
 
         if choice == "Y" or choice == "y":
             return True
@@ -176,7 +181,7 @@ class Battle:
         accepted_list.append("Q")
         
         # Get item number
-        choice = self.get_menu_input(accepted_list)
+        choice = get_menu_input(accepted_list)
 
         # Quit from item menu
         if choice == "q" or choice == "Q":
@@ -188,7 +193,7 @@ class Battle:
 
 
     # Fight function
-    def battle(self) -> None:
+    def battle(self) -> bool:
         # Inputs accepted while choose for menu
         menu_choices_list = ["1", "2", "3", "4"]
         
@@ -196,7 +201,7 @@ class Battle:
         enemy_has_already_attacked = False
         while (self.enemy.health > 0 and self.player.health > 0):
             self.print_menu()
-            choice = self.get_menu_input(menu_choices_list)
+            choice = get_menu_input(menu_choices_list)
 
             match choice:
                 case "1":
@@ -256,6 +261,8 @@ class Battle:
         
         if (self.enemy.health <= 0):
             print("You've defeated {e}".format(e = self.enemy.name))
-        elif (self.player.health <= 0):
+            return True
+        else:
             print("You've been defeated by {e}".format(e = self.enemy.name))
+            return False
             
