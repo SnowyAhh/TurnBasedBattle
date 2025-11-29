@@ -5,6 +5,7 @@ from battle_types.enemy import Enemy
 from battle_types.player import Player
 from battle_types.initalise_actions import action_list
 from battle_types.action import Action
+from util import get_menu_input
 
 class Battle:
     # Battle file, shows moves, damage, health
@@ -48,16 +49,7 @@ class Battle:
         
         # Wait for the player to choose to go back
         print("Go back now? (Y)")
-        self.get_menu_input(["Y", "y"])
-
-    # Check input
-    def get_menu_input(self, accepted: list[str]) -> str:
-        choice = ""
-        choice = input()
-        while choice not in accepted:
-            print("Invalid choice, try again: ")
-            choice = input()
-        return choice
+        get_menu_input(["Y", "y"])
     
     # Action
     def get_action(self) -> str:
@@ -67,7 +59,7 @@ class Battle:
         num_arr.append("Q")
         num_arr.append("q")
         
-        return self.get_menu_input(num_arr)
+        return get_menu_input(num_arr)
 
     def calc_damage(self, attacker: Entity) -> int:
         damage = attacker.attack
@@ -142,7 +134,7 @@ class Battle:
         menu_confirmation_list = ["Y", "y", "n", "N"]
         print("Are you sure you want to run? (Y/N)")
         
-        choice = self.get_menu_input(menu_confirmation_list)
+        choice = get_menu_input(menu_confirmation_list)
 
         if choice == "Y" or choice == "y":
             return True
@@ -176,7 +168,7 @@ class Battle:
         accepted_list.append("Q")
         
         # Get item number
-        choice = self.get_menu_input(accepted_list)
+        choice = get_menu_input(accepted_list)
 
         # Quit from item menu
         if choice == "q" or choice == "Q":
@@ -196,7 +188,7 @@ class Battle:
         enemy_has_already_attacked = False
         while (self.enemy.health > 0 and self.player.health > 0):
             self.print_menu()
-            choice = self.get_menu_input(menu_choices_list)
+            choice = get_menu_input(menu_choices_list)
 
             match choice:
                 case "1":
