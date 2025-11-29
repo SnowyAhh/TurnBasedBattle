@@ -32,7 +32,7 @@ class Travel:
 
         self.player.increase_item(item, quantity)
 
-    def chance_encounter(self) -> None:
+    def chance_encounter(self) -> bool:
         # Encountering an enemy is be 50%, gaining an item is 33.33%, and nothing is 16.67%
         # Out of 6, enemy is 1-3, item is 4-5, and nothing is 6
         chance = random.randint(1, 6)
@@ -42,39 +42,40 @@ class Travel:
 
         if (chance <= 3):
             # Enemy
-            Battle(self.player).battle()
+            return Battle(self.player).battle()
         elif (chance <= 5):
             # Item
             self.get_new_item()
+            return True
         else:
             # Nothing
             print("You found nothing here")
+            return True
 
-    def quit(self) -> None:
-        print("Goodbye!")
+    def print_quit(self) -> None:
+        print("Your travels have ended!")
 
     def travel(self) -> None:
         # Moving outside of battles
-        choice = ""
-
         self.print_start()
-        while (choice != "q" or "Q"):
+        survived = True
+        while (survived):
             input = self.print_menu_and_get_input(self.stage)
 
             match input:
                 case "1":
-                    self.chance_encounter()
+                    survived = self.chance_encounter()
                 case "2":
                     self.player.print_all_stats()
                     print()
-
                     continue
                 case "Q" | "q":
-                    quit()
-                    return
+                    break
                 case _:
                     raise ValueError("Invalid input")
 
             self.stage += 1
+
+        self.print_quit()
         
 

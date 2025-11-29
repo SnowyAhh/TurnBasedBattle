@@ -193,7 +193,7 @@ class Battle:
 
 
     # Fight function
-    def battle(self) -> None:
+    def battle(self) -> bool:
         # Inputs accepted while choose for menu
         menu_choices_list = ["1", "2", "3", "4"]
         
@@ -261,6 +261,8 @@ class Battle:
         
         if (self.enemy.health <= 0):
             print("You've defeated {e}".format(e = self.enemy.name))
-        elif (self.player.health <= 0):
+            return True
+        else:
             print("You've been defeated by {e}".format(e = self.enemy.name))
+            return False
             
