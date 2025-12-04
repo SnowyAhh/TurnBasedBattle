@@ -90,6 +90,10 @@ class Travel:
                 case "3":
                     self.player.print_all_stats()
                     print()
+
+                    # Wait for the player to choose to go back
+                    print("Go back now? (Y)")
+                    get_menu_input(["Y", "y"])
                     continue
                 case "Q" | "q":
                     break
