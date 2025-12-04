@@ -5,6 +5,8 @@ from battle_types.initalise_actions import *
 from battle_types.action import Action
 from util import get_menu_input
 
+import random
+
 class Player(Entity):
     def __init__(self) -> None:
         # Set starting stats
@@ -303,8 +305,7 @@ class Player(Entity):
         amount_needed = int(100 + 100 * (self.level - 1) / 2)
 
         while (self.experience + amount >= amount_needed):
-            self.level += 1
-            print(f"Leveled up to {self.level}!")
+            self.handle_level_up()
 
             # Use up experience first
             if self.experience != 0:
@@ -316,3 +317,26 @@ class Player(Entity):
             amount_needed = int(100 + 100 * (self.level - 1) / 2)
 
         self.experience += amount
+    
+    def handle_level_up(self) -> None:
+        self.level += 1
+        print(f"Leveled up to {self.level}!")
+
+        # Increase stats
+        increased_health = random.randint(5, 20)
+        increased_attack = random.randint(1, 10)
+        increased_stamina = random.randint(5, 20)
+        increased_mana = random.randint(5, 20)
+
+        self.health += increased_health
+        self.attack += increased_attack
+        self.max_stamina += increased_stamina
+        self.stamina += increased_stamina
+        self.max_mana += increased_mana
+        self.mana += increased_mana
+
+        print("Stats increased:")
+        print(f"\tHealth: {increased_health}")
+        print(f"\tAttack: {increased_attack}")
+        print(f"\tMax stamina: {increased_stamina}")
+        print(f"\tMax mana: {increased_mana}")
