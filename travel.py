@@ -26,6 +26,11 @@ class Travel:
         print(f"Found {quantity} {item.name}(s)!")
 
         self.player.increase_item(item, quantity)
+    
+    def regenerate_stamina_and_mana(self) -> None:
+        # Reset stamina and mana
+        self.player.stamina = self.player.max_stamina
+        self.player.mana = self.player.max_mana
 
     def chance_encounter(self) -> bool:
         # Encountering an enemy is be 50%, gaining an item is 33.33%, and nothing is 16.67%
@@ -76,10 +81,6 @@ class Travel:
                     time.sleep(1)
 
                     survived = self.chance_encounter()
-
-                    # Reset stamina and mana
-                    self.player.stamina = self.player.max_stamina
-                    self.player.mana = self.player.max_mana
                 case "2":
                     success = self.player.get_item_choice()
 
@@ -100,6 +101,7 @@ class Travel:
                 case _:
                     raise ValueError("Invalid input")
 
+            self.regenerate_stamina_and_mana()
             self.stage += 1
 
         self.print_quit()
