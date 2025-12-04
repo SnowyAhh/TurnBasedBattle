@@ -22,12 +22,12 @@ class Entity:
     
     def print_basic_stats(self) -> None:
         print("--{name}--".format(name = self.name))
-        print(f"{f"Health: {int(self.health)}":20s}Attack:{int(self.attack)}")
-        print(f"{f"Stamina: {int(self.stamina)}":20s}Mana: {int(self.mana)}")
+        print(f"{f"Health: {int(self.health)}":30s}Attack: {int(self.attack)}")
+        print(f"{f"Stamina: {int(self.stamina)}":30s}Mana: {int(self.mana)}")
     
     def print_all_stats(self) -> None:
         self.print_basic_stats()
-        print(f"{f"Crit Rate: {self.crit_rate:.2f}":20s}Crit Damage:{self.crit_damage:.2f}")
+        print(f"{f"Crit Rate: {self.crit_rate:.2f}":30s}Crit Damage: {self.crit_damage:.2f}")
         print(f"Speed: {self.speed}")
     
     def print_attack(self, action: Action, opponent: Entity) -> None:
