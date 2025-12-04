@@ -9,10 +9,12 @@ class Player(Entity):
     def __init__(self) -> None:
         # Set starting stats
         self.items = self.initalise_items()
+        self.level: int = 1
+        self.experience: int = 0
         super().__init__(health=100, attack=20, name="You", 
                          crit_damage=1.5, crit_rate=0.25, speed=100, 
                          actions=self.initalise_actions(), stamina=100, mana=100)
-    
+
     def initalise_items(self) -> list:
         i_list = [
                     [item_list.get("potion_hp_sml"), 5], 
@@ -37,6 +39,18 @@ class Player(Entity):
 
         return a_list
     
+    # Override parent function
+    def print_all_stats(self) -> None:
+        print("--{name}--".format(name = self.name))
+
+        # Part specific to player
+        print(f"{f"Level: {self.level}":30s}Experience: {self.experience}")
+
+        print(f"{f"Health: {int(self.health)}":30s}Attack: {int(self.attack)}")
+        print(f"{f"Stamina: {int(self.stamina)}":30s}Mana: {int(self.mana)}")
+        print(f"{f"Crit Rate: {self.crit_rate:.2f}":30s}Crit Damage: {self.crit_damage:.2f}")
+        print(f"Speed: {self.speed}")
+
     def increase_item(self, item: Item, quantity: int) -> None:
         # Scan item list
         for i in self.items:
@@ -281,3 +295,24 @@ class Player(Entity):
         # Use item
         index = int(choice) - 1
         return self.use_item(index)
+
+    def gain_experience(self, amount: int) -> None:
+        # If experience is greater than amount needed to level up, 
+        # remove that amount and add remainder to experience
+
+        amount_needed = int(100 + 100 * (self.level - 1) / 2)
+
+        while (self.experience + amount >= amount_needed):
+            self.level += 1
+            print(f"Leveled up to {self.level}!")
+
+            # Use up experience first
+            if self.experience != 0:
+                amount_needed -= self.experience
+                self.experience = 0
+
+            amount -= amount_needed
+
+            amount_needed = int(100 + 100 * (self.level - 1) / 2)
+
+        self.experience += amount
