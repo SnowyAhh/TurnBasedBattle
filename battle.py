@@ -3,7 +3,6 @@ import random
 from battle_types.entity import Entity
 from battle_types.enemy import Enemy, enemy_names
 from battle_types.player import Player
-from battle_types.initalise_actions import action_list, action_values_list
 from battle_types.action import Action
 from util import get_menu_input
 
@@ -11,36 +10,8 @@ class Battle:
     # Battle file, shows moves, damage, health
     def __init__(self, player: Player) -> None:
         self.round = 1
-        self.enemy = self.generate_enemy()
         self.player = player
-
-    # Randomises an enemy
-    def generate_enemy(self) -> Enemy:
-        # For now, it'll generate a set stat enemy
-        a_list = [
-            action_list.get("other_recover_wait")
-        ]
-
-        # Add one to four moves
-        for i in range(0, random.randint(1, 5)):
-            action = action_values_list[i]
-
-            if action in a_list:
-                i -= 1
-                continue
-            
-            a_list.append(action)
-
-        enemy = Enemy(health=random.randint(50, 200), 
-                      attack=random.randint(5, 20), 
-                      name=enemy_names[random.randint(0, len(enemy_names) - 1)], 
-                      crit_damage=1 + random.random(), 
-                      crit_rate=random.random(), 
-                      speed=random.randint(50, 150),
-                      actions=a_list, 
-                      stamina=random.randint(50, 200), 
-                      mana=random.randint(50, 200))
-        return enemy
+        self.enemy = Enemy.generate_random_enemy()
 
     # Menu prints
     def print_start(self) -> None:
@@ -51,8 +22,8 @@ class Battle:
         self.enemy.print_basic_stats()
         self.player.print_basic_stats()
         print("--Choose your move--")
-        print(f"{"1. Act":20s}2. Use Item")
-        print(f"{"3. Check stats":20s}4. Run away")
+        print(f"{"1. Act":30s}2. Use Item")
+        print(f"{"3. Check stats":30s}4. Run away")
     
     def print_stats(self) -> None:
         print("Stats:")

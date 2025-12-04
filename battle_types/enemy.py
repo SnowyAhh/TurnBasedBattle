@@ -3,6 +3,7 @@ import random
 from battle_types.entity import Entity
 from battle_types.player import Player
 from battle_types.action import Action
+from battle_types.initalise_actions import action_list, action_values_list
 
 enemy_names = [
     "Thief",
@@ -12,6 +13,32 @@ enemy_names = [
 ]
 
 class Enemy(Entity):
+    @staticmethod
+    def generate_random_enemy() -> Enemy:
+        a_list = [
+            action_list.get("other_recover_wait")
+        ]
+
+        # Add one to four moves
+        for i in range(0, random.randint(1, 5)):
+            action = action_values_list[i]
+
+            if action in a_list:
+                i -= 1
+                continue
+            
+            a_list.append(action)
+
+        return Enemy(health=random.randint(50, 200), 
+                      attack=random.randint(5, 20), 
+                      name=enemy_names[random.randint(0, len(enemy_names) - 1)], 
+                      crit_damage=1 + random.random(), 
+                      crit_rate=random.random(), 
+                      speed=random.randint(50, 150),
+                      actions=a_list, 
+                      stamina=random.randint(50, 200), 
+                      mana=random.randint(50, 200))
+
     def choose_action(self) -> Action:
         num_moves = len(self.actions)
 
