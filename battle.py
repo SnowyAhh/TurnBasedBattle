@@ -155,42 +155,6 @@ class Battle:
             return False
         
         raise ValueError("Invalid choice")
-        
-    # Use items
-    def use_item(self) -> bool:
-        accepted_list = []
-        print("Your Items:")
-
-        if (len(self.player.items) == 0):
-            print("No items available")
-            print("Going back to selection: ")
-            return False
-        
-        # Print items
-        for i in range(len(self.player.items)):
-            accepted_list.append(str(i + 1))
-            print("\t{num}. {name} x{quantity} - {description}".format(
-                num = i + 1, 
-                name = self.player.items[i][0].name, 
-                quantity = self.player.items[i][1], 
-                description = self.player.items[i][0].description
-            ))
-
-        print("Enter the item number to use it, or q to go back")
-        accepted_list.append("q")
-        accepted_list.append("Q")
-        
-        # Get item number
-        choice = get_menu_input(accepted_list)
-
-        # Quit from item menu
-        if choice == "q" or choice == "Q":
-            return False
-        
-        # Use item
-        index = int(choice) - 1
-        return self.player.use_item(index)
-
 
     # Fight function
     def battle(self) -> bool:
@@ -212,7 +176,7 @@ class Battle:
                         continue
                 case "2":
                     # Use item
-                    success = self.use_item()
+                    success = self.player.get_item_choice()
 
                     if not success:
                         continue
@@ -235,7 +199,7 @@ class Battle:
         
                     if (success):
                         print("Ran away successfully!")
-                        break
+                        return True
                     else:
                         print("Failed to run away!")
                 case _:
