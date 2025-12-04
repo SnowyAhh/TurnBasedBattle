@@ -3,6 +3,7 @@ from battle_types.initalise_items import item_list
 from battle_types.item import ItemTypes, Item
 from battle_types.initalise_actions import *
 from battle_types.action import Action
+from util import get_menu_input
 
 class Player(Entity):
     def __init__(self) -> None:
@@ -247,3 +248,36 @@ class Player(Entity):
             case _:
                 raise ValueError("Invalid choice")
     
+    def get_item_choice(self) -> bool:
+        accepted_list = []
+        print("Your Items:")
+
+        if (len(self.items) == 0):
+            print("No items available")
+            print("Going back to selection: ")
+            return False
+        
+        # Print items
+        for i in range(len(self.items)):
+            accepted_list.append(str(i + 1))
+            print("\t{num}. {name} x{quantity} - {description}".format(
+                num = i + 1, 
+                name = self.items[i][0].name, 
+                quantity = self.items[i][1], 
+                description = self.items[i][0].description
+            ))
+
+        print("Enter the item number to use it, or q to go back")
+        accepted_list.append("q")
+        accepted_list.append("Q")
+        
+        # Get item number
+        choice = get_menu_input(accepted_list)
+
+        # Quit from item menu
+        if choice == "q" or choice == "Q":
+            return False
+        
+        # Use item
+        index = int(choice) - 1
+        return self.use_item(index)
