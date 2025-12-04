@@ -13,16 +13,11 @@ class Travel:
     def print_start(self) -> None:
         print("Welcome to turn based battle!")
 
-    def print_menu_and_get_input(self, stage: int) -> str:
-        accepted = ["1", "2", "Q", "q"]
-
+    def print_menu(self, stage: int) -> None:
         print(f"\n---Stage {stage}---")
-        print("Choose your action:")
-        print("1. Move to new area")
-        print("2. Check status")
-        print("Q: Quit game")
-
-        return get_menu_input(accepted)
+        print("--Choose your action--")
+        print(f"{"1. Move to new area":30s}2. Use Item")
+        print(f"{"3. Check stats":30s}Q. Quit game")
 
     def get_new_item(self) -> None:
         item = items_values_list[random.randint(0, len(items_values_list) - 1)]
@@ -37,9 +32,6 @@ class Travel:
         # Out of 6, enemy is 1-3, item is 4-5, and nothing is 6
         chance = random.randint(1, 6)
 
-        print("Moving to new area...")
-        time.sleep(1)
-
         if (chance <= 3):
             # Enemy
             return Battle(self.player).battle()
@@ -51,25 +43,51 @@ class Travel:
             # Nothing
             print("You found nothing here")
             return True
+    
+    def chance_encounter_use_item(self) -> bool:
+        # Chance of encountering an enemy after using an item
+        chance = random.randint(1, 6)
+
+        if (chance <= 3):
+            # Enemy
+            print("A surprise attack!")
+
+            return Battle(self.player).battle()
+
+        # Else nothing happens
+        return True
 
     def print_quit(self) -> None:
         print("Your travels have ended!")
 
     def travel(self) -> None:
+        menu_choices_list = ["1", "2", "3", "Q", "q"]
+
         # Moving outside of battles
         self.print_start()
         survived = True
         while (survived):
-            input = self.print_menu_and_get_input(self.stage)
+            self.print_menu(self.stage)
+            input = get_menu_input(menu_choices_list)
 
             match input:
                 case "1":
+                    print("Moving to new area...")
+                    time.sleep(1)
+
                     survived = self.chance_encounter()
 
                     # Reset stamina and mana
                     self.player.stamina = self.player.max_stamina
                     self.player.mana = self.player.max_mana
                 case "2":
+                    success = self.player.get_item_choice()
+
+                    if not success:
+                        continue
+                    else:
+                        survived = self.chance_encounter_use_item()
+                case "3":
                     self.player.print_all_stats()
                     print()
                     continue
