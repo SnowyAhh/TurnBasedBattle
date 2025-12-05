@@ -7,6 +7,7 @@ class Entity:
     def __init__(self, health: int, attack: int, name: str, crit_damage: float,
                 crit_rate: float, speed: int, actions: list, stamina: int,
                 mana: int) -> None:
+        self.max_health = health
         self.health = health
         self.attack = attack
         self.name = name
@@ -22,7 +23,7 @@ class Entity:
     
     def print_basic_stats(self) -> None:
         print("--{name}--".format(name = self.name))
-        print(f"{f"Health: {int(self.health)}":30s}Attack: {int(self.attack)}")
+        print(f"{f"Health: {int(self.health)}/{int(self.max_health)}":30s}Attack: {int(self.attack)}")
         print(f"{f"Stamina: {int(self.stamina)}":30s}Mana: {int(self.mana)}")
     
     def print_all_stats(self) -> None:
@@ -33,7 +34,7 @@ class Entity:
     def print_attack(self, action: Action, opponent: Entity) -> None:
         pass
 
-    def print_heal(self, action: Action, healed: int, is_crit: bool) -> None:
+    def print_heal(self, action: Action) -> None:
         pass
     
     def print_damaged(self, damage: int) -> None:
@@ -84,7 +85,7 @@ class Entity:
     # Returns array (healed, is_crit)
     def calc_heal(self, heal: Action) -> list:
         is_crit = False
-        healed = int(self.health * heal.points_given)
+        healed = int(self.max_health * heal.points_given)
 
         # See if user will do a crit heal
         number: int = random.randint(1, 100)
@@ -98,9 +99,37 @@ class Entity:
     def use_heal(self, heal: Action) -> None:
         healed = self.calc_heal(heal)
 
-        self.print_heal(heal, healed[0], healed[1])
+        self.print_heal(heal)
+
+        if (self.health >= self.max_health):
+            print("But it failed! Already have max health".format(
+                name = heal.name
+            ))
+
+            self.health = self.max_health
+            return
+        elif (self.health + healed[0] > self.max_health):
+            if healed[1] and (healed[0] < self.max_health - self.health):
+                print("Received extra health!")
+
+            print("Increased health by {points}!".format(
+                name = heal.name,
+                points = self.max_health - self.health
+            ))
+
+            self.health = self.max_health
+        else: 
+            if healed[1]:
+                print("Received extra health!")
+
+            print("Increased health by {points}!".format(
+                name = heal.name,
+                points = healed[0]
+            ))
+
+            self.health += healed[0]
         
-        self.health += healed[0]
+        
     
     def use_recover(self, recover: Action) -> None:
         self.print_wait()

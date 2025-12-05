@@ -48,7 +48,7 @@ class Player(Entity):
         # Part specific to player
         print(f"{f"Level: {self.level}":30s}Experience: {self.experience}")
 
-        print(f"{f"Health: {int(self.health)}":30s}Attack: {int(self.attack)}")
+        print(f"{f"Health: {int(self.health)}/{int(self.max_health)}":30s}Attack: {int(self.attack)}")
         print(f"{f"Stamina: {int(self.stamina)}":30s}Mana: {int(self.mana)}")
         print(f"{f"Crit Rate: {self.crit_rate:.2f}":30s}Crit Damage: {self.crit_damage:.2f}")
         print(f"Speed: {self.speed}")
@@ -78,13 +78,8 @@ class Player(Entity):
     def print_damaged(self, damage: int) -> None:
         print(f"{self.name} take {damage} damage!")
     
-    def print_heal(self, action: Action, healed: int, is_crit: bool) -> None:
+    def print_heal(self, action: Action) -> None:
         print(f"{self.name} use {action.name}")
-
-        if is_crit:
-            print("Received extra health!")
-        
-        print(f"Healed {healed} hp!")
 
     def print_not_enough_stamina(self, action: Action) -> None:
         print(f"You try to use {action.name} but you don't have enough stamina")
@@ -118,13 +113,27 @@ class Player(Entity):
         print("You wait a turn")
 
     def use_health_item(self, index: int) -> bool:
-        print("Used {name}. Restored {points} hp!".format(
-            name = self.items[index][0].name,
-            points = self.items[index][0].points
-        ))
+        if (self.health >= self.max_health):
+            print("Used {name}. But it failed! Already have max health".format(
+                name = self.items[index][0].name
+            ))
 
-        # Increase health
-        self.health += self.items[index][0].points
+            self.health = self.max_health
+        elif (self.health + self.items[index][0].points > self.max_health):
+            print("Used {name}. Increased health by {points}!".format(
+                name = self.items[index][0].name,
+                points = self.max_health - self.health
+            ))
+
+            self.health = self.max_health
+        else: 
+            print("Used {name}. Increased health by {points}!".format(
+                name = self.items[index][0].name,
+                points = self.items[index][0].points
+            ))
+
+            self.health += self.items[index][0].points
+
         # Decrease quantity
         self.decrease_item(index)
 
@@ -328,6 +337,7 @@ class Player(Entity):
         increased_stamina = random.randint(5, 20)
         increased_mana = random.randint(5, 20)
 
+        self.max_health += increased_health
         self.health += increased_health
         self.attack += increased_attack
         self.max_stamina += increased_stamina
