@@ -53,13 +53,8 @@ class Enemy(Entity):
     def print_damaged(self, damage: int) -> None:
         print(f"{self.name} takes {damage} damage!")
     
-    def print_heal(self, action: Action, healed: int, is_crit: bool) -> None:
+    def print_heal(self, action: Action) -> None:
         print(f"{self.name} uses {action.name}")
-
-        if is_crit:
-            print("Received extra health!")
-        
-        print(f"Healed {healed} hp!")
     
     def print_not_enough_stamina(self, action: Action) -> None:
         print(f"{self.name} tries to use {action.name} but they don't have enough stamina")

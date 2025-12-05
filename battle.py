@@ -12,6 +12,7 @@ class Battle:
         self.round = 1
         self.player = player
         self.enemy = Enemy.generate_random_enemy()
+        self.experience = int(self.enemy.health / 2)
 
     # Menu prints
     def print_start(self) -> None:
@@ -196,6 +197,9 @@ class Battle:
         
         if (self.enemy.health <= 0):
             print("You've defeated {e}".format(e = self.enemy.name))
+
+            print (f"You've gained {self.experience} experience")
+            self.player.gain_experience(self.experience)
             return True
         else:
             print("You've been defeated by {e}".format(e = self.enemy.name))

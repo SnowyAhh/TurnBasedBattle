@@ -5,14 +5,18 @@ from battle_types.initalise_actions import *
 from battle_types.action import Action
 from util import get_menu_input
 
+import random
+
 class Player(Entity):
     def __init__(self) -> None:
         # Set starting stats
         self.items = self.initalise_items()
+        self.level: int = 1
+        self.experience: int = 0
         super().__init__(health=100, attack=20, name="You", 
                          crit_damage=1.5, crit_rate=0.25, speed=100, 
                          actions=self.initalise_actions(), stamina=100, mana=100)
-    
+
     def initalise_items(self) -> list:
         i_list = [
                     [item_list.get("potion_hp_sml"), 5], 
@@ -37,6 +41,18 @@ class Player(Entity):
 
         return a_list
     
+    # Override parent function
+    def print_all_stats(self) -> None:
+        print("--{name}--".format(name = self.name))
+
+        # Part specific to player
+        print(f"{f"Level: {self.level}":30s}Experience: {self.experience}")
+
+        print(f"{f"Health: {int(self.health)}/{int(self.max_health)}":30s}Attack: {int(self.attack)}")
+        print(f"{f"Stamina: {int(self.stamina)}":30s}Mana: {int(self.mana)}")
+        print(f"{f"Crit Rate: {self.crit_rate:.2f}":30s}Crit Damage: {self.crit_damage:.2f}")
+        print(f"Speed: {self.speed}")
+
     def increase_item(self, item: Item, quantity: int) -> None:
         # Scan item list
         for i in self.items:
@@ -62,13 +78,8 @@ class Player(Entity):
     def print_damaged(self, damage: int) -> None:
         print(f"{self.name} take {damage} damage!")
     
-    def print_heal(self, action: Action, healed: int, is_crit: bool) -> None:
+    def print_heal(self, action: Action) -> None:
         print(f"{self.name} use {action.name}")
-
-        if is_crit:
-            print("Received extra health!")
-        
-        print(f"Healed {healed} hp!")
 
     def print_not_enough_stamina(self, action: Action) -> None:
         print(f"You try to use {action.name} but you don't have enough stamina")
@@ -102,13 +113,27 @@ class Player(Entity):
         print("You wait a turn")
 
     def use_health_item(self, index: int) -> bool:
-        print("Used {name}. Restored {points} hp!".format(
-            name = self.items[index][0].name,
-            points = self.items[index][0].points
-        ))
+        if (self.health >= self.max_health):
+            print("Used {name}. But it failed! Already have max health".format(
+                name = self.items[index][0].name
+            ))
 
-        # Increase health
-        self.health += self.items[index][0].points
+            self.health = self.max_health
+        elif (self.health + self.items[index][0].points > self.max_health):
+            print("Used {name}. Increased health by {points}!".format(
+                name = self.items[index][0].name,
+                points = self.max_health - self.health
+            ))
+
+            self.health = self.max_health
+        else: 
+            print("Used {name}. Increased health by {points}!".format(
+                name = self.items[index][0].name,
+                points = self.items[index][0].points
+            ))
+
+            self.health += self.items[index][0].points
+
         # Decrease quantity
         self.decrease_item(index)
 
@@ -281,3 +306,47 @@ class Player(Entity):
         # Use item
         index = int(choice) - 1
         return self.use_item(index)
+
+    def gain_experience(self, amount: int) -> None:
+        # If experience is greater than amount needed to level up, 
+        # remove that amount and add remainder to experience
+
+        amount_needed = int(100 + 100 * (self.level - 1) / 2)
+
+        while (self.experience + amount >= amount_needed):
+            self.handle_level_up()
+
+            # Use up experience first
+            if self.experience != 0:
+                amount_needed -= self.experience
+                self.experience = 0
+
+            amount -= amount_needed
+
+            amount_needed = int(100 + 100 * (self.level - 1) / 2)
+
+        self.experience += amount
+    
+    def handle_level_up(self) -> None:
+        self.level += 1
+        print(f"Leveled up to {self.level}!")
+
+        # Increase stats
+        increased_health = random.randint(5, 20)
+        increased_attack = random.randint(1, 10)
+        increased_stamina = random.randint(5, 20)
+        increased_mana = random.randint(5, 20)
+
+        self.max_health += increased_health
+        self.health += increased_health
+        self.attack += increased_attack
+        self.max_stamina += increased_stamina
+        self.stamina += increased_stamina
+        self.max_mana += increased_mana
+        self.mana += increased_mana
+
+        print("Stats increased:")
+        print(f"\tHealth: {increased_health}")
+        print(f"\tAttack: {increased_attack}")
+        print(f"\tMax stamina: {increased_stamina}")
+        print(f"\tMax mana: {increased_mana}")

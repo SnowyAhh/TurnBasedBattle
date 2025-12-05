@@ -80,6 +80,10 @@ class Travel:
                     print("Moving to new area...")
                     time.sleep(1)
 
+                    experience = random.randint(10, 30)
+                    print(f"You've gained {experience} experience from exploration")
+                    self.player.gain_experience(experience)
+
                     survived = self.chance_encounter()
                 case "2":
                     success = self.player.get_item_choice()
