@@ -16,7 +16,7 @@ class Player(Entity):
         self.action_list: list = self.initalise_actions()
         super().__init__(health=100, attack=20, name="You", 
                          crit_damage=1.5, crit_rate=0.25, speed=100, 
-                         actions=self.action_list, stamina=100, mana=100)
+                         actions=self.initalise_actions(), stamina=100, mana=100)
 
     def initalise_items(self) -> list:
         i_list = [
@@ -95,7 +95,7 @@ class Player(Entity):
 
         for i in range(len(action_list)):
             num_arr.append(str(i + 1))
-            print("{i}. {name} ({points_used} {cat}) - {description} ({points_given} {type})".format(
+            print("\t{i}. {name} ({points_used} {cat}) - {description} ({points_given} {type})".format(
                 i = i + 1, name = action_list[i].name, 
                 points_used = action_list[i].points_used,
                 cat = "stamina" if action_list[i].category == ActionCategories.PHYSICAL else "mana",
@@ -355,36 +355,89 @@ class Player(Entity):
         print(f"\tMax mana: {increased_mana}")
 
     def print_unused_actions(self) -> bool:
-        print("--Current Actions--")
+        print("--Current actions--")
         self.print_actions()
 
-        print("--Unused Actions--")
+        print("\n--Unused actions--")
         unused_action_list = []
+
         for i in self.action_list:
             if i not in self.actions:
                 unused_action_list.append(i)
         
         if len(unused_action_list) == 0:
-            print("No unused action found")
+            print("\tNo such actions found")
         else:
             self.print_actions(unused_action_list)
         
-        # Returns true if there are no unused action, else false
-        return len(unused_action_list) == 0
+        # Returns true if there are unused action, else false
+        return len(unused_action_list) != 0
 
-    def change_moves(self) -> None:
-        # Print actions
-        has_unused_actions = self.print_unused_actions
-       
-        # If there is none, have the player confirm to continue
-        if has_unused_actions:
-            print("Continue back to menu? (Y)")
-            get_menu_input(["Y", "y"])
+    def remove_current_actions(self) -> None:
+        choice = ""
+        changes = self.actions.copy()
 
-            return
+        while choice != "Q" and choice != "q":
+            print("--Remove current actions--")
+            print("Choose actions to remove, you must have at least one move")
 
-        # If there are actions, have the player adjust them
-        # Can remove current actions
-        # Can add unused actions
+            choices = self.print_actions(changes)
 
-        pass
+            print("S. Save changes")
+            choices.append("S")
+            choices.append("s")
+            print("Q. Quit without saving")
+            choices.append("Q")
+            choices.append("q")
+
+            choice = get_menu_input(choices)
+
+            if choice == "S" or choice == "s":
+                print("Saved changes")
+                self.actions = changes
+                return
+            elif choice == "Q" or choice == "q":
+                print("Reverting changes")
+                return
+
+            if len(changes) == 1:
+                print("Error: Must have at least one action, either revert or save changes")
+            else:
+                try:
+                    changes.pop(int(choice) - 1)
+                except:
+                    print("Error with removing action, returning back to action menu")
+
+
+    def change_actions(self) -> None:
+        choice = ""
+        
+        while choice != "Y" and choice != "y" and choice != "Q" and choice != "q":
+            print("---Manage Actions---")
+            # Print actions
+            has_unused_actions = self.print_unused_actions()
+        
+            # If there are unused actions, have the player adjust them otherwise, 
+            # They can only remove their current actions
+            print("\nEnter your choice number, or q to go back")
+            choices = ["1", "Q", "q"]
+            print("1. Remove current actions")
+            if has_unused_actions:
+                print("2. Add unused actions")
+                choices.append("2")
+
+            choice = get_menu_input(choices)
+
+            match choice:
+                case "1":
+                    # Can remove current actions
+                    self.remove_current_actions()
+                case "2":
+                    # Can add unused actions
+                    print("A")
+                case "Q" | "q":
+                    break
+                case _:
+                    raise ValueError("Invalid input")
+
+        
