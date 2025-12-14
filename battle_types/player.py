@@ -13,9 +13,10 @@ class Player(Entity):
         self.items = self.initalise_items()
         self.level: int = 1
         self.experience: int = 0
+        self.action_list: list = self.initalise_actions()
         super().__init__(health=100, attack=20, name="You", 
                          crit_damage=1.5, crit_rate=0.25, speed=100, 
-                         actions=self.initalise_actions(), stamina=100, mana=100)
+                         actions=self.action_list, stamina=100, mana=100)
 
     def initalise_items(self) -> list:
         i_list = [
@@ -33,8 +34,6 @@ class Player(Entity):
     def initalise_actions(self) -> list:
         a_list = [
             action_list.get("physical_attack_punch"),
-            action_list.get("physical_attack_stab"),
-            action_list.get("magical_health_heal"),
             action_list.get("magical_attack_air_blast"),
             action_list.get("other_recover_wait")
         ]
@@ -87,18 +86,22 @@ class Player(Entity):
     def print_not_enough_mana(self, action: Action) -> None:
         print(f"You try to use {action.name} but you don't have enough mana")
     
-    def print_actions(self) -> list:
+    def print_actions(self, action_list = None) -> list:
         num_arr = []
 
-        for i in range(len(self.actions)):
+        # Default for action list is self.actions
+        if action_list is None:
+            action_list = self.actions
+
+        for i in range(len(action_list)):
             num_arr.append(str(i + 1))
             print("{i}. {name} ({points_used} {cat}) - {description} ({points_given} {type})".format(
-                i = i + 1, name = self.actions[i].name, 
-                points_used = self.actions[i].points_used,
-                cat = "stamina" if self.actions[i].category == ActionCategories.PHYSICAL else "mana",
-                description = self.actions[i].description,
-                points_given = self.actions[i].points_given if self.actions[i].type != ActionTypes.HEALTH else str(int(self.actions[i].points_given * 100)) + "%",
-                type = "attack" if self.actions[i].type == ActionTypes.ATTACK else "health" if self.actions[i].type == ActionTypes.HEALTH else "stamina/mana"
+                i = i + 1, name = action_list[i].name, 
+                points_used = action_list[i].points_used,
+                cat = "stamina" if action_list[i].category == ActionCategories.PHYSICAL else "mana",
+                description = action_list[i].description,
+                points_given = action_list[i].points_given if action_list[i].type != ActionTypes.HEALTH else str(int(action_list[i].points_given * 100)) + "%",
+                type = "attack" if action_list[i].type == ActionTypes.ATTACK else "health" if action_list[i].type == ActionTypes.HEALTH else "stamina/mana"
             ))
         
         return num_arr
@@ -350,3 +353,38 @@ class Player(Entity):
         print(f"\tAttack: {increased_attack}")
         print(f"\tMax stamina: {increased_stamina}")
         print(f"\tMax mana: {increased_mana}")
+
+    def print_unused_actions(self) -> bool:
+        print("--Current Actions--")
+        self.print_actions()
+
+        print("--Unused Actions--")
+        unused_action_list = []
+        for i in self.action_list:
+            if i not in self.actions:
+                unused_action_list.append(i)
+        
+        if len(unused_action_list) == 0:
+            print("No unused action found")
+        else:
+            self.print_actions(unused_action_list)
+        
+        # Returns true if there are no unused action, else false
+        return len(unused_action_list) == 0
+
+    def change_moves(self) -> None:
+        # Print actions
+        has_unused_actions = self.print_unused_actions
+       
+        # If there is none, have the player confirm to continue
+        if has_unused_actions:
+            print("Continue back to menu? (Y)")
+            get_menu_input(["Y", "y"])
+
+            return
+
+        # If there are actions, have the player adjust them
+        # Can remove current actions
+        # Can add unused actions
+
+        pass
