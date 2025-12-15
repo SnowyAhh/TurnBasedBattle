@@ -13,6 +13,7 @@ class Player(Entity):
         self.items = self.initalise_items()
         self.level: int = 1
         self.experience: int = 0
+        self.action_list: list = self.initalise_actions()
         super().__init__(health=100, attack=20, name="You", 
                          crit_damage=1.5, crit_rate=0.25, speed=100, 
                          actions=self.initalise_actions(), stamina=100, mana=100)
@@ -33,8 +34,6 @@ class Player(Entity):
     def initalise_actions(self) -> list:
         a_list = [
             action_list.get("physical_attack_punch"),
-            action_list.get("physical_attack_stab"),
-            action_list.get("magical_health_heal"),
             action_list.get("magical_attack_air_blast"),
             action_list.get("other_recover_wait")
         ]
@@ -87,18 +86,22 @@ class Player(Entity):
     def print_not_enough_mana(self, action: Action) -> None:
         print(f"You try to use {action.name} but you don't have enough mana")
     
-    def print_actions(self) -> list:
+    def print_actions(self, action_list = None) -> list:
         num_arr = []
 
-        for i in range(len(self.actions)):
+        # Default for action list is self.actions
+        if action_list is None:
+            action_list = self.actions
+
+        for i in range(len(action_list)):
             num_arr.append(str(i + 1))
-            print("{i}. {name} ({points_used} {cat}) - {description} ({points_given} {type})".format(
-                i = i + 1, name = self.actions[i].name, 
-                points_used = self.actions[i].points_used,
-                cat = "stamina" if self.actions[i].category == ActionCategories.PHYSICAL else "mana",
-                description = self.actions[i].description,
-                points_given = self.actions[i].points_given if self.actions[i].type != ActionTypes.HEALTH else str(int(self.actions[i].points_given * 100)) + "%",
-                type = "attack" if self.actions[i].type == ActionTypes.ATTACK else "health" if self.actions[i].type == ActionTypes.HEALTH else "stamina/mana"
+            print("\t{i}. {name} ({points_used} {cat}) - {description} ({points_given} {type})".format(
+                i = i + 1, name = action_list[i].name, 
+                points_used = action_list[i].points_used,
+                cat = "stamina" if action_list[i].category == ActionCategories.PHYSICAL else "mana",
+                description = action_list[i].description,
+                points_given = action_list[i].points_given if action_list[i].type != ActionTypes.HEALTH else str(int(action_list[i].points_given * 100)) + "%",
+                type = "attack" if action_list[i].type == ActionTypes.ATTACK else "health" if action_list[i].type == ActionTypes.HEALTH else "stamina/mana"
             ))
         
         return num_arr
@@ -350,3 +353,136 @@ class Player(Entity):
         print(f"\tAttack: {increased_attack}")
         print(f"\tMax stamina: {increased_stamina}")
         print(f"\tMax mana: {increased_mana}")
+
+    def print_unused_actions(self, current_action_list = None) -> bool:
+        if current_action_list is None:
+            current_action_list = self.actions
+
+        print("--Current actions--")
+        self.print_actions(current_action_list)
+
+        print("\n--Unused actions--")
+        unused_action_list = []
+
+        for i in self.action_list:
+            if i not in current_action_list:
+                unused_action_list.append(i)
+        
+        if len(unused_action_list) == 0:
+            print("\tNo such actions found")
+        else:
+            self.print_actions(unused_action_list)
+        
+        # Returns true if there are unused action, else false
+        return len(unused_action_list) != 0
+
+    def remove_current_actions(self) -> None:
+        choice = ""
+        changes = self.actions.copy()
+
+        while choice != "Q" and choice != "q":
+            print("\n--Remove current actions--")
+            print("Choose actions to remove, you must have at least one move")
+
+            choices = self.print_actions(changes)
+
+            print("S. Save changes")
+            choices.append("S")
+            choices.append("s")
+            print("Q. Quit without saving")
+            choices.append("Q")
+            choices.append("q")
+
+            choice = get_menu_input(choices)
+
+            if choice == "S" or choice == "s":
+                print("Saved changes")
+                self.actions = changes
+                return
+            elif choice == "Q" or choice == "q":
+                print("Reverting changes")
+                return
+
+            if len(changes) == 1:
+                print("Error: Must have at least one action, either revert or save changes")
+            else:
+                try:
+                    changes.pop(int(choice) - 1)
+                except:
+                    print("Error with removing action, returning back to action menu")
+
+    def add_unused_actions(self) -> None:
+        choice = ""
+        changes = self.actions.copy()
+
+        while choice != "Q" and choice != "q":
+            print("\n--Add unused actions--")
+            print("Choose action to add. Maximum of four moves can be kept at once")
+
+            self.print_unused_actions(changes)
+
+            # Get changes
+            choices = []
+            unused_actions = []
+            index = 0
+            for i in self.action_list:
+                if i not in changes:
+                    index += 1
+                    unused_actions.append(i)
+                    choices.append(str(index))
+
+            print("S. Save changes")
+            choices.append("S")
+            choices.append("s")
+            print("Q. Quit without saving")
+            choices.append("Q")
+            choices.append("q")
+
+            choice = get_menu_input(choices)
+
+            if choice == "S" or choice == "s":
+                print("Saved changes")
+                self.actions = changes
+                return
+            elif choice == "Q" or choice == "q":
+                print("Reverting changes")
+                return
+            else:
+                if (len(changes) == 4):
+                    print("Error: Cannot add any more moves. Either save or revert changes")
+                else:
+                    changes.append(unused_actions[int(choice) - 1])
+
+    def change_actions(self) -> None:
+        choice = ""
+        
+        while choice != "Y" and choice != "y" and choice != "Q" and choice != "q":
+            print("---Manage Actions---")
+            # Print actions
+            has_unused_actions = self.print_unused_actions()
+        
+            # If there are unused actions, have the player adjust them otherwise, 
+            # They can only remove their current actions
+            print("\nEnter your choice number, or q to go back")
+            choices = ["1", "Q", "q"]
+            print("1. Remove current actions")
+
+            if has_unused_actions and len(self.actions) < 4:
+                print("2. Add unused actions")
+                choices.append("2")
+
+            choice = get_menu_input(choices)
+
+            match choice:
+                case "1":
+                    # Can remove current actions
+                    self.remove_current_actions()
+                case "2":
+                    # Can add unused actions
+                    self.add_unused_actions()
+                case "Q" | "q":
+                    break
+                case _:
+                    raise ValueError("Invalid input")
+
+        

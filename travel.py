@@ -17,7 +17,8 @@ class Travel:
         print(f"\n---Stage {stage}---")
         print("--Choose your action--")
         print(f"{"1. Move to new area":30s}2. Use Item")
-        print(f"{"3. Check stats":30s}Q. Quit game")
+        print(f"{"3. Check stats":30s}4. Manage Actions")
+        print("Q. Quit game")
 
     def get_new_item(self) -> None:
         item = items_values_list[random.randint(0, len(items_values_list) - 1)]
@@ -66,7 +67,7 @@ class Travel:
         print("Your travels have ended!")
 
     def travel(self) -> None:
-        menu_choices_list = ["1", "2", "3", "Q", "q"]
+        menu_choices_list = ["1", "2", "3", "4", "Q", "q"]
 
         # Moving outside of battles
         self.print_start()
@@ -100,6 +101,8 @@ class Travel:
                     print("Go back now? (Y)")
                     get_menu_input(["Y", "y"])
                     continue
+                case "4":
+                    self.player.change_actions()
                 case "Q" | "q":
                     break
                 case _:
