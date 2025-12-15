@@ -360,8 +360,14 @@ class Player(Entity):
         for i in action_values_list:
             if i.requirement_level == self.level:
                 if i not in self.action_list:
-                    print(f"Learnt new move, {i.name}")
+                    print(f"Learnt new action, {i.name}")
                     self.action_list.append(i)
+
+                    # Only add new actions into current actions if there is space
+                    if len(self.actions) < 4:    
+                        self.actions.append(i)
+                    else:
+                        print("Maximum current actions reached, go to manage actions to swap for the new action")
 
     def print_unused_actions(self, current_action_list = None) -> bool:
         if current_action_list is None:
