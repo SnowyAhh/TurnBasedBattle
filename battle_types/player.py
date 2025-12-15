@@ -354,15 +354,18 @@ class Player(Entity):
         print(f"\tMax stamina: {increased_stamina}")
         print(f"\tMax mana: {increased_mana}")
 
-    def print_unused_actions(self) -> bool:
+    def print_unused_actions(self, current_action_list = None) -> bool:
+        if current_action_list is None:
+            current_action_list = self.actions
+
         print("--Current actions--")
-        self.print_actions()
+        self.print_actions(current_action_list)
 
         print("\n--Unused actions--")
         unused_action_list = []
 
         for i in self.action_list:
-            if i not in self.actions:
+            if i not in current_action_list:
                 unused_action_list.append(i)
         
         if len(unused_action_list) == 0:
@@ -408,6 +411,47 @@ class Player(Entity):
                 except:
                     print("Error with removing action, returning back to action menu")
 
+    def add_unused_actions(self) -> None:
+        choice = ""
+        changes = self.actions.copy()
+
+        while choice != "Q" and choice != "q":
+            print("--Add unused actions--")
+            print("Choose action to add. Maximum of four moves can be kept at once")
+
+            self.print_unused_actions(changes)
+
+            # Get changes
+            choices = []
+            unused_actions = []
+            index = 0
+            for i in self.action_list:
+                if i not in self.actions:
+                    index += 1
+                    unused_actions.append(i)
+                    choices.append(str(index))
+
+            print("S. Save changes")
+            choices.append("S")
+            choices.append("s")
+            print("Q. Quit without saving")
+            choices.append("Q")
+            choices.append("q")
+
+            choice = get_menu_input(choices)
+
+            if choice == "S" or choice == "s":
+                print("Saved changes")
+                self.actions = changes
+                return
+            elif choice == "Q" or choice == "q":
+                print("Reverting changes")
+                return
+            else:
+                if (len(changes) == 4):
+                    print("Error: Cannot add any more moves. Either save or revert changes")
+                else:
+                    changes.append(unused_actions[int(choice) - 1])
 
     def change_actions(self) -> None:
         choice = ""
@@ -422,6 +466,7 @@ class Player(Entity):
             print("\nEnter your choice number, or q to go back")
             choices = ["1", "Q", "q"]
             print("1. Remove current actions")
+
             if has_unused_actions:
                 print("2. Add unused actions")
                 choices.append("2")
@@ -434,7 +479,7 @@ class Player(Entity):
                     self.remove_current_actions()
                 case "2":
                     # Can add unused actions
-                    print("A")
+                    self.add_unused_actions()
                 case "Q" | "q":
                     break
                 case _:
