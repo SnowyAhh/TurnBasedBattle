@@ -381,7 +381,7 @@ class Player(Entity):
         changes = self.actions.copy()
 
         while choice != "Q" and choice != "q":
-            print("--Remove current actions--")
+            print("\n--Remove current actions--")
             print("Choose actions to remove, you must have at least one move")
 
             choices = self.print_actions(changes)
@@ -416,7 +416,7 @@ class Player(Entity):
         changes = self.actions.copy()
 
         while choice != "Q" and choice != "q":
-            print("--Add unused actions--")
+            print("\n--Add unused actions--")
             print("Choose action to add. Maximum of four moves can be kept at once")
 
             self.print_unused_actions(changes)
@@ -426,7 +426,7 @@ class Player(Entity):
             unused_actions = []
             index = 0
             for i in self.action_list:
-                if i not in self.actions:
+                if i not in changes:
                     index += 1
                     unused_actions.append(i)
                     choices.append(str(index))
@@ -467,7 +467,7 @@ class Player(Entity):
             choices = ["1", "Q", "q"]
             print("1. Remove current actions")
 
-            if has_unused_actions:
+            if has_unused_actions and len(self.actions) < 4:
                 print("2. Add unused actions")
                 choices.append("2")
 
