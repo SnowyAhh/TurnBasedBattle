@@ -64,7 +64,10 @@ class Travel:
         return True
 
     def print_quit(self) -> None:
-        print("Your travels have ended!")
+        print("---Your travels have ended!---")
+        print("--End Stats--")
+        print(f"Stages survived: {self.stage}")
+        self.player.print_all_stats()
 
     def travel(self) -> None:
         menu_choices_list = ["1", "2", "3", "4", "Q", "q"]

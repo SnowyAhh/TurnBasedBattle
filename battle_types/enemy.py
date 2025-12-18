@@ -14,7 +14,7 @@ enemy_names = [
 
 class Enemy(Entity):
     @staticmethod
-    def generate_random_enemy() -> Enemy:
+    def generate_random_enemy(player: Player) -> Enemy:
         a_list = [
             action_list.get("other_recover_wait")
         ]
@@ -29,7 +29,11 @@ class Enemy(Entity):
             
             a_list.append(action)
 
-        return Enemy(health=random.randint(50, 200), 
+        # Have hp be based on player health
+        min_health = int(player.max_health / 2)
+        max_health = int(player.max_health * 1.25)
+
+        return Enemy(health=random.randint(min_health, max_health), 
                       attack=random.randint(5, 20), 
                       name=enemy_names[random.randint(0, len(enemy_names) - 1)], 
                       crit_damage=1 + random.random(), 

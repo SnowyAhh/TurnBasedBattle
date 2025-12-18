@@ -11,8 +11,8 @@ class ActionCategories(Enum):
 
 class Action:
     def __init__(self, name: str, type: ActionTypes, category: ActionCategories,
-                points_given: int | float, points_used: int, description: str
-                ) -> None:
+                points_given: int | float, points_used: int, description: str,
+                requirement_level: int) -> None:
         self.name = name
         self.type = type
         self.category = category
@@ -21,3 +21,5 @@ class Action:
         self.points_given = points_given
         self.points_used = points_used
         self.description = description
+        # Requirement level needs to match for the player to be able to use the action
+        self.requirement_level = requirement_level

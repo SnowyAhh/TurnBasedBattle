@@ -11,7 +11,7 @@ class Battle:
     def __init__(self, player: Player) -> None:
         self.round = 1
         self.player = player
-        self.enemy = Enemy.generate_random_enemy()
+        self.enemy = Enemy.generate_random_enemy(player)
         self.experience = int(self.enemy.health / 2)
 
     # Menu prints

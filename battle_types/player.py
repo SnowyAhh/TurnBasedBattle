@@ -32,11 +32,11 @@ class Player(Entity):
         return i_list
 
     def initalise_actions(self) -> list:
-        a_list = [
-            action_list.get("physical_attack_punch"),
-            action_list.get("magical_attack_air_blast"),
-            action_list.get("other_recover_wait")
-        ]
+        a_list = []
+
+        for i in action_values_list:
+            if i.requirement_level == 1:
+                a_list.append(i)
 
         return a_list
     
@@ -353,6 +353,21 @@ class Player(Entity):
         print(f"\tAttack: {increased_attack}")
         print(f"\tMax stamina: {increased_stamina}")
         print(f"\tMax mana: {increased_mana}")
+
+        self.learn_new_actions()
+
+    def learn_new_actions(self) -> None:
+        for i in action_values_list:
+            if i.requirement_level == self.level:
+                if i not in self.action_list:
+                    print(f"Learnt new action, {i.name}")
+                    self.action_list.append(i)
+
+                    # Only add new actions into current actions if there is space
+                    if len(self.actions) < 4:    
+                        self.actions.append(i)
+                    else:
+                        print("Maximum current actions reached, go to manage actions to swap for the new action")
 
     def print_unused_actions(self, current_action_list = None) -> bool:
         if current_action_list is None:
